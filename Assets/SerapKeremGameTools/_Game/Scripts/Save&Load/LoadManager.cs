@@ -14,39 +14,37 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// <param name="key">The key for the saved data</param>
         /// <param name="defaultValue">The default value to return if the data does not exist</param>
         /// <returns>The loaded data of type T</returns>
-        public T LoadData<T>(string key, T defaultValue = default)
+        public static T LoadData<T>(string key,  T defaultValue = default)
         {
             if (typeof(T) == typeof(string))
             {
-                return (T)(object)PlayerPrefs.GetString(key, (string)(object)defaultValue);
+                return (T)(object)LoadData_String(key);
             }
             else if (typeof(T) == typeof(int))
             {
-                return (T)(object)PlayerPrefs.GetInt(key, (int)(object)defaultValue);
+                return (T)(object)LoadData_Int(key);
             }
             else if (typeof(T) == typeof(float))
             {
-                return (T)(object)PlayerPrefs.GetFloat(key, (float)(object)defaultValue);
+                return (T)(object)LoadData_Float(key);
             }
-            else if (typeof(T) == typeof(bool))
-            {
-                return (T)(object)(PlayerPrefs.GetInt(key, 0) == 1); // 0 -> false, 1 -> true
-            }
+
 
 #if UNITY_EDITOR
             Debug.LogWarning($"Unsupported type: {typeof(T)}");
 #endif
             return defaultValue;
         }
+    
 
         /// <summary>
         /// Loads a string value from PlayerPrefs.
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <returns>The loaded string value</returns>
-        public string LoadData_String(string key)
+        private static string LoadData_String(string key,string defaultValue="")
         {
-            return LoadData(key, "");
+            return PlayerPrefs.GetString(key);
         }
 
         /// <summary>
@@ -54,9 +52,9 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <returns>The loaded integer value</returns>
-        public int LoadData_Int(string key)
+        private static int LoadData_Int(string key)
         {
-            return LoadData(key, 0);
+            return PlayerPrefs.GetInt(key);
         }
 
         /// <summary>
@@ -64,19 +62,11 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <returns>The loaded float value</returns>
-        public float LoadData_Float(string key)
+        private static float LoadData_Float(string key)
         {
-            return LoadData(key, 0f);
+            return PlayerPrefs.GetFloat(key);
         }
 
-        /// <summary>
-        /// Loads a boolean value from PlayerPrefs.
-        /// </summary>
-        /// <param name="key">The key for the saved data</param>
-        /// <returns>The loaded boolean value</returns>
-        public bool LoadData_Bool(string key)
-        {
-            return LoadData(key, false);
-        }
+      
     }
 }

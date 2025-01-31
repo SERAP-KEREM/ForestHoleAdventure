@@ -9,8 +9,7 @@ Shader "Unlit/ZWriteOff"
         Pass
         {
           ZWrite Off
-          ZTest Always
-          ColorMask 0
+         
         }
     }
 }

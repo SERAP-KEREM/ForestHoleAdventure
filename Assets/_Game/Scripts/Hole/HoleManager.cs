@@ -1,37 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using Unity.VisualScripting;
+using _Main._Level;
+using _Main._Objects;
 using UnityEngine;
-using UnityEngine.UI;
-public class HoleManager : MonoBehaviour
+
+namespace _Main.Hole
 {
-    private float _circleCapacity;
-    [SerializeField] private Image _circleImage;
-    [SerializeField] private Transform _holeGameObject;
-
-    private void Start()
+    public class HoleManager : MonoBehaviour
     {
-        _circleCapacity = _holeGameObject.localScale.x;
-    }
-    private void ProcessBarCircle(int number)
-    {
-        _circleCapacity=1f/number;
+        [SerializeField] private Transform _holeTransform;
+        [SerializeField] private LevelManager _levelManager; // Reference to LevelManager
 
-        _circleImage.fillAmount+=_circleCapacity;
+        private void OnTriggerEnter(Collider other)
+        {
+            CollectibleItem collectible = other.GetComponent<CollectibleItem>();
+            if (collectible != null && !collectible.IsCollected)
+            {
+                float holeSize = _holeTransform.localScale.x;
+                float objectSize = collectible.Size;
 
-        if(_circleImage.fillAmount.Equals(1f))        {
-           _holeGameObject.localScale+=new Vector3(0.3f,0f,3f);
-           _circleImage.fillAmount=0f;  
+                if (holeSize >= objectSize)
+                {
+                    // Puanı LevelManager'a bildir
+                    _levelManager.AddScore(collectible.Score);
+                    collectible.Collect();
+
+                    Debug.Log($"Collected: {other.gameObject.name}, Score: {collectible.Score}");
+                }
+                else
+                {
+                    Debug.Log($"Object too big: Hole size {holeSize}, Object size {objectSize}");
+                }
+            }
         }
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-       if(other.gameObject.CompareTag("cube"))
-       {
-        ProcessBarCircle(20);
-        other.gameObject.SetActive(false);
-       }
+        // Deliği büyütmek için public metod
+        public void SetHoleSize(float size)
+        {
+            Vector3 newScale = Vector3.one * size;
+            // Y scale'i 0 olarak tut
+            newScale.y = _holeTransform.localScale.y;
+            _holeTransform.localScale = newScale;
+
+            // Pozisyonu zemine sabitle
+            Vector3 position = _holeTransform.position;
+            position.y = 0f; // veya başlangıç Y pozisyonu
+            _holeTransform.position = position;
+        }
     }
 }

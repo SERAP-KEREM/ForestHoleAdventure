@@ -13,7 +13,7 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// <typeparam name="T">The data type to save (string, int, float, bool)</typeparam>
         /// <param name="key">The key for the saved data</param>
         /// <param name="value">The value to save</param>
-        public void SaveData<T>(string key, T value)
+        public static void SaveData<T>(string key, T value)
         {
             if (value == null)
             {
@@ -25,19 +25,15 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
 
             if (value is string)
             {
-                PlayerPrefs.SetString(key, value.ToString());
+                SaveData_String(key, value.ToString());
             }
             else if (value is int)
             {
-                PlayerPrefs.SetInt(key, (int)(object)value);
+                SaveData_Int(key, (int)(object)value);
             }
             else if (value is float)
             {
-                PlayerPrefs.SetFloat(key, (float)(object)value);
-            }
-            else if (value is bool)
-            {
-                PlayerPrefs.SetInt(key, (bool)(object)value ? 1 : 0);
+                SaveData_Float(key, (float)(object)value);
             }
             else
             {
@@ -55,9 +51,9 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <param name="value">The string value to save</param>
-        public void SaveData_String(string key, string value)
+        private static void SaveData_String(string key, string value)
         {
-            SaveData(key, value);
+            PlayerPrefs.SetString(key, value);
         }
 
         /// <summary>
@@ -65,9 +61,9 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <param name="value">The integer value to save</param>
-        public void SaveData_Int(string key, int value)
+        private static void SaveData_Int(string key, int value)
         {
-            SaveData(key, value);
+            PlayerPrefs.SetInt(key, value);
         }
 
         /// <summary>
@@ -75,26 +71,18 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// </summary>
         /// <param name="key">The key for the saved data</param>
         /// <param name="value">The float value to save</param>
-        public void SaveData_Float(string key, float value)
+        private static void SaveData_Float(string key, float value)
         {
-            SaveData(key, value);
+            PlayerPrefs.SetFloat(key, value);   
         }
 
-        /// <summary>
-        /// Saves a boolean value using PlayerPrefs.
-        /// </summary>
-        /// <param name="key">The key for the saved data</param>
-        /// <param name="value">The boolean value to save</param>
-        public void SaveData_Bool(string key, bool value)
-        {
-            SaveData(key, value);
-        }
+      
 
         /// <summary>
         /// Clears saved data by a given key.
         /// </summary>
         /// <param name="key">The key for the saved data to delete</param>
-        public void ClearData(string key)
+        public static void ClearData(string key)
         {
             if (PlayerPrefs.HasKey(key))
             {
@@ -115,13 +103,18 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// <summary>
         /// Clears all saved PlayerPrefs data.
         /// </summary>
-        public void ClearAllData()
+        public static void ClearAllData()
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
 #if UNITY_EDITOR
             Debug.Log("All PlayerPrefs data cleared.");
 #endif
+        }
+
+        public static bool HasKeyData(string key)
+        {
+            return PlayerPrefs.HasKey(key);
         }
     }
 }

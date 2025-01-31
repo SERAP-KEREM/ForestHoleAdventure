@@ -5,8 +5,6 @@ using TMPro;
 
 public class SaveLoadManager : MonoBehaviour
 {
-    public SaveManager saveManager;
-    public LoadManager loadManager;
 
     // UI Elements
     public TMP_InputField inputStringField;
@@ -35,22 +33,20 @@ public class SaveLoadManager : MonoBehaviour
         loadButton.onClick.AddListener(LoadData);
         clearButton.onClick.AddListener(ClearData);
 
-        // Initialize SaveManager and LoadManager
-        saveManager = new SaveManager();
-        loadManager = new LoadManager();
+        
     }
 
     // Save the data from input fields
     private void SaveData()
     {
         // Save string data
-        saveManager.SaveData_String(testStringKey, inputStringField.text);
+        SaveManager.SaveData(testStringKey, inputStringField.text);
 
         // Save int data (make sure to parse it safely)
         int intValue;
         if (int.TryParse(inputIntField.text, out intValue))
         {
-            saveManager.SaveData_Int(testIntKey, intValue);
+            SaveManager.SaveData(testIntKey, intValue);
         }
         else
         {
@@ -61,7 +57,7 @@ public class SaveLoadManager : MonoBehaviour
         float floatValue;
         if (float.TryParse(inputFloatField.text, out floatValue))
         {
-            saveManager.SaveData_Float(testFloatKey, floatValue);
+            SaveManager.SaveData(testFloatKey, floatValue);
         }
         else
         {
@@ -69,32 +65,32 @@ public class SaveLoadManager : MonoBehaviour
         }
 
         // Save bool data
-        saveManager.SaveData_Bool(testBoolKey, inputBoolField.isOn);
+        SaveManager.SaveData(testBoolKey, inputBoolField.isOn);
     }
 
     // Load the data and display it in text fields
     private void LoadData()
     {
-        string loadedString = loadManager.LoadData_String(testStringKey);
+        string loadedString =LoadManager.LoadData(testStringKey,"");
         stringText.text = "Loaded String: " + loadedString;
 
-        int loadedInt = loadManager.LoadData_Int(testIntKey);
+        int loadedInt = LoadManager.LoadData(testIntKey,0);
         intText.text = "Loaded Int: " + loadedInt.ToString();
 
-        float loadedFloat = loadManager.LoadData_Float(testFloatKey);
+        float loadedFloat = LoadManager.LoadData(testFloatKey,0.0f);
         floatText.text = "Loaded Float: " + loadedFloat.ToString("F2"); // Float formatlama
 
-        bool loadedBool = loadManager.LoadData_Bool(testBoolKey);
+        bool loadedBool = LoadManager.LoadData(testBoolKey,true);
         boolText.text = "Loaded Bool: " + loadedBool.ToString();
     }
 
     // Clear all saved data
     private void ClearData()
     {
-        saveManager.ClearData(testStringKey);
-        saveManager.ClearData(testIntKey);
-        saveManager.ClearData(testFloatKey);
-        saveManager.ClearData(testBoolKey);
+        SaveManager.ClearData(testStringKey);
+        SaveManager.ClearData(testIntKey);
+        SaveManager.ClearData(testFloatKey);
+        SaveManager.ClearData(testBoolKey);
 
         // Clear UI texts after clearing the data
         stringText.text = "Loaded String: ";
