@@ -15,7 +15,7 @@ MonoBehaviour:
   _levelNumber: 1
   _targetScore: 1000
   _levelTime: 180
-  _initialHoleSize: 1
+  _initialHoleSize: 0.5
   _maxHoleSize: 10
   _baseGrowthFactor: 0.001
   _scoreThresholdForGrowth: 500

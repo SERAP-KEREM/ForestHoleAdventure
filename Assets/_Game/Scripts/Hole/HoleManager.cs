@@ -17,13 +17,14 @@ namespace _Main.Hole
                 float holeSize = _holeTransform.localScale.x;
                 float objectSize = collectible.Size;
 
-                if (holeSize >= objectSize)
+                // Delik boyutu nesne boyutuna eşit veya daha büyükse yut
+                if (holeSize >= objectSize * 0.9f) // %10 tolerans ekledik
                 {
-                    // Puanı LevelManager'a bildir
                     _levelManager.AddScore(collectible.Score);
-                    collectible.Collect();
+                    collectible.Collect(_holeTransform);
 
-                    Debug.Log($"Collected: {other.gameObject.name}, Score: {collectible.Score}");
+                    Debug.Log($"Collected: {other.gameObject.name}, " +
+                             $"Hole Size: {holeSize}, Object Size: {objectSize}");
                 }
                 else
                 {

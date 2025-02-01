@@ -35,19 +35,6 @@ namespace _Main.Hole
             transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
         }
 
-        private void OnTriggerEnter(Collider other)
-        {
-            CollectibleItem collectible = other.GetComponent<CollectibleItem>();
-
-            if (collectible != null && !collectible.IsCollected)
-            {
-                // Deliğin boyutu nesnenin boyutundan büyükse yut
-                if (transform.localScale.x > collectible.Size)
-                {
-                    levelManager.AddScore(collectible.Score);
-                    collectible.Collect();
-                }
-            }
-        }
+       
     }
 }
