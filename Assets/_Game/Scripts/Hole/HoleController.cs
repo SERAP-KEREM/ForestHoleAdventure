@@ -1,11 +1,9 @@
 using UnityEngine;
 using _Main.InputSystem;
+using _Main._Level;
 
 namespace _Main.Hole
 {
-    using _Main._Level;
-    using _Main._Objects;
-    using UnityEngine;
 
     public class HoleController : MonoBehaviour
     {

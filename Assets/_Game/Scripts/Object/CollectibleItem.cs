@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using DG.Tweening;
 
 namespace _Main._Objects
@@ -6,15 +6,15 @@ namespace _Main._Objects
     public class CollectibleItem : MonoBehaviour
     {
         [Header("Collection Animation Settings")]
-        [SerializeField] private float _collectDuration = 1f;
-        [SerializeField] private float _spiralRadius = 0.5f;
-        [SerializeField] private float _spiralRotations = 1.5f;
-        [SerializeField] private float _fallHeight = 0.5f;
+        [SerializeField] private float _collectDuration = 2f; // Düşme süresi
+        [SerializeField] private float _fallDepth = 0.5f; // Delik içine düşme mesafesi
+        [SerializeField] private float _fadeDuration = 1.5f; // Şeffaflaşma süresi
 
         [Header("Object Settings")]
         [SerializeField] private CollectibleType _type;
 
-
+        private Material _material;
+        private Color _originalColor;
         private float _size;
         private bool _isCollected;
 
@@ -25,16 +25,33 @@ namespace _Main._Objects
         private void Awake()
         {
             CalculateSize();
+            InitializeMaterial();
         }
 
         private void CalculateSize()
         {
             Bounds bounds = GetComponent<Collider>().bounds;
-            // Daha k���k bir boyut hesaplamas? yapal?m
-            _size = Mathf.Max(bounds.size.x, bounds.size.z) * 0.5f; // 0.5f �arpan? ekledik
+            _size = Mathf.Max(bounds.size.x, bounds.size.z) * 0.5f;
 
-            // Boyutu logla
             Debug.Log($"Object {gameObject.name} calculated size: {_size}");
+        }
+
+        private void InitializeMaterial()
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _material = renderer.material;
+                _originalColor = _material.color;
+
+                // Materyali transparan moduna ayarla
+                _material.SetFloat("_Surface", 1); // Transparent
+                _material.SetOverrideTag("RenderType", "Transparent");
+               
+                _material.SetInt("_ZWrite", 0);
+                _material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                _material.EnableKeyword("_ALPHABLEND_ON");
+            }
         }
 
         public void Collect(Transform holeTransform)
@@ -42,68 +59,53 @@ namespace _Main._Objects
             if (!_isCollected)
             {
                 _isCollected = true;
-                PlayCollectAnimation(holeTransform);
+
+                // Basit düşme animasyonu
+                transform.DOMove(holeTransform.position, _collectDuration)
+                    .SetEase(Ease.InQuad);
+
+                // Hafif küçülme
+                transform.DOScale(Vector3.zero, _collectDuration)
+                    .SetEase(Ease.InQuad)
+                    .OnComplete(() =>
+                    {
+                        gameObject.SetActive(false);
+                        // Nesneyi orijinal haline getir
+                        transform.localScale = Vector3.one;
+                    });
             }
         }
+
         private void PlayCollectAnimation(Transform holeTransform)
         {
-            // Animasyon ba?lang?c?nda nesnenin ve deli?in pozisyonlar?
-            Vector3 startPos = transform.position;
-            Vector3 targetPos = holeTransform.position;
+            // Hedef pozisyon deliğin biraz altı
+            Vector3 targetPos = holeTransform.position - Vector3.up * _fallDepth;
 
-            // Sequence olu?tur
-            Sequence collectSequence = DOTween.Sequence();
+            // Şeffaflaşma animasyonu
+            FadeOut();
 
-            // Spiral hareket i�in path olu?tur
-            Vector3[] path = CreateSpiralPath(startPos, targetPos);
-
-            // Path boyunca hareket
-            collectSequence.Append(transform.DOPath(path, _collectDuration, PathType.CatmullRom)
-                .SetEase(Ease.InQuad));
-
-            // D�nd�rme animasyonu
-            collectSequence.Join(transform.DORotate(new Vector3(360f, 360f, 360f), _collectDuration, RotateMode.FastBeyond360)
-                .SetEase(Ease.InQuad));
-
-            // K���lme animasyonu (gecikmeli ba?las?n)
-            collectSequence.Join(transform.DOScale(Vector3.zero, _collectDuration * 0.9f)
-                .SetEase(Ease.InQuad)
-                .SetDelay(_collectDuration * 0.3f));
-
-            // Animasyon bitiminde
-            collectSequence.OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-                transform.position = startPos;
-                transform.localScale = Vector3.one;
-            });
+            // Yavaş bir şekilde deliğe doğru düşme animasyonu
+            transform.DOMove(targetPos, _collectDuration)
+                .SetEase(Ease.InOutQuad)
+                .OnComplete(() =>
+                {
+                    gameObject.SetActive(false);
+                });
         }
-        private Vector3[] CreateSpiralPath(Vector3 start, Vector3 end)
+
+        private void FadeOut()
         {
-            int pointCount = 20; // Path noktalar?n?n say?s?
-            Vector3[] path = new Vector3[pointCount];
-
-            for (int i = 0; i < pointCount; i++)
+            if (_material != null)
             {
-                float t = i / (float)(pointCount - 1); // 0 ile 1 aras? de?er
-
-                // Spiral hareketi hesapla
-                float angle = t * _spiralRotations * Mathf.PI * 2f;
-                float radius = _spiralRadius * (1f - t); // Radius giderek azals?n
-
-                float x = Mathf.Cos(angle) * radius;
-                float z = Mathf.Sin(angle) * radius;
-
-                // Y�kseklik hesapla (parabolik d�?�?)
-                float y = _fallHeight * (1f - t * t);
-
-                // Noktay? hesapla
-                Vector3 offset = new Vector3(x, -y, z);
-                path[i] = Vector3.Lerp(start, end, t) + offset;
+                _material.DOFade(0f, _fadeDuration)
+                    .OnComplete(() =>
+                    {
+                        // Nesne tamamen şeffaf hale geldiğinde materyali eski haline döndür
+                        _material.color = _originalColor;
+                    });
             }
-
-            return path;
         }
+
         private void OnDestroy()
         {
             transform.DOKill();

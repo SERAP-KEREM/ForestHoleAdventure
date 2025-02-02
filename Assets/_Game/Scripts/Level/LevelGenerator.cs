@@ -1,29 +1,39 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace _Main._Level
-{ 
 public class LevelGenerator : MonoBehaviour
 {
     [System.Serializable]
-    public class ObjectSpawnInfo
+    public class SpawnZone
     {
-        public GameObject prefab;
-        public int count;
-        [Range(1f, 5f)] public float minSpacing = 2f; // Nesneler aras? minimum mesafe
+        public string name; // Örne?in: "Trees", "Rocks", "Homes"
+        public float minX;
+        public float maxX;
+        public float minZ;
+        public float maxZ;
+        public float yPosition = 0f;
     }
 
-    [Header("Spawn Area")]
-    [SerializeField] private float minX = -20f;
-    [SerializeField] private float maxX = 40f;
-    [SerializeField] private float minZ = -20f;
-    [SerializeField] private float maxZ = 40f;
-    [SerializeField] private float yPosition = 0f;
+    [System.Serializable]
+    public class ObjectSpawnInfo
+    {
+        public GameObject prefab; // Spawn edilecek prefab
+        public int count; // Kaç tane spawn edilece?i
+        [Range(1f, 5f)] public float minSpacing = 2f; // Minimum mesafe
+    }
 
-    [Header("Objects to Spawn")]
-    [SerializeField] private ObjectSpawnInfo[] objectsToSpawn;
+    [System.Serializable]
+    public class ClassifiedSpawnInfo
+    {
+        public string classification; // Örne?in: "Trees", "Rocks", "Homes"
+        public SpawnZone zone; // S?n?fa ait alan (zone)
+        public List<ObjectSpawnInfo> objectsToSpawn; // O alandaki nesneler
+    }
 
-    [Header("Debug")]
+    [Header("Classified Spawn Settings")]
+    [SerializeField] private List<ClassifiedSpawnInfo> classifiedObjects;
+
+    [Header("Debug Settings")]
     [SerializeField] private bool showDebugGizmos = true;
 
     private List<Vector3> occupiedPositions = new List<Vector3>();
@@ -37,13 +47,15 @@ public class LevelGenerator : MonoBehaviour
     {
         occupiedPositions.Clear();
 
-        foreach (var objectInfo in objectsToSpawn)
+        foreach (var classifiedInfo in classifiedObjects)
         {
-            SpawnObjects(objectInfo);
+            SpawnObjectsInZone(classifiedInfo);
         }
     }
 
-        private void SpawnObjects(ObjectSpawnInfo objectInfo)
+    private void SpawnObjectsInZone(ClassifiedSpawnInfo classifiedInfo)
+    {
+        foreach (var objectInfo in classifiedInfo.objectsToSpawn)
         {
             int attempts = 0;
             int maxAttempts = objectInfo.count * 100; // Sonsuz döngüyü önlemek için
@@ -51,17 +63,15 @@ public class LevelGenerator : MonoBehaviour
 
             while (spawned < objectInfo.count && attempts < maxAttempts)
             {
-                Vector3 position = GetRandomPosition();
+                Vector3 position = GetRandomPositionInZone(classifiedInfo.zone);
 
                 if (IsPositionValid(position, objectInfo.minSpacing))
                 {
-                    // Instantiate s?ras?nda parent'? ayarla
                     GameObject obj = Instantiate(objectInfo.prefab, position, Quaternion.Euler(0, Random.Range(0f, 360f), 0), transform);
                     occupiedPositions.Add(position);
                     spawned++;
 
-                    // Debug log
-                    Debug.Log($"Spawned {objectInfo.prefab.name} at {position}");
+                    Debug.Log($"Spawned {objectInfo.prefab.name} in {classifiedInfo.classification} zone at {position}");
                 }
 
                 attempts++;
@@ -69,15 +79,16 @@ public class LevelGenerator : MonoBehaviour
 
             if (attempts >= maxAttempts)
             {
-                Debug.LogWarning($"Couldn't spawn all requested {objectInfo.prefab.name}. Space might be too crowded.");
+                Debug.LogWarning($"Couldn't spawn all requested {objectInfo.prefab.name} in zone {classifiedInfo.classification}. Space might be too crowded.");
             }
         }
+    }
 
-        private Vector3 GetRandomPosition()
+    private Vector3 GetRandomPositionInZone(SpawnZone zone)
     {
-        float x = Random.Range(minX, maxX);
-        float z = Random.Range(minZ, maxZ);
-        return new Vector3(x, yPosition, z);
+        float x = Random.Range(zone.minX, zone.maxX);
+        float z = Random.Range(zone.minZ, zone.maxZ);
+        return new Vector3(x, zone.yPosition, z);
     }
 
     private bool IsPositionValid(Vector3 position, float minSpacing)
@@ -90,7 +101,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
-        // Raycast ile zemin kontrolü
+        // Raycast ile zemin kontrolü (iste?e ba?l?)
         Ray ray = new Ray(position + Vector3.up * 10f, Vector3.down);
         if (Physics.Raycast(ray, out RaycastHit hit, 20f))
         {
@@ -107,16 +118,21 @@ public class LevelGenerator : MonoBehaviour
     {
         if (!showDebugGizmos) return;
 
-        // Spawn alan?n? görselle?tir
         Gizmos.color = Color.green;
-        Vector3 center = new Vector3((minX + maxX) * 0.5f, yPosition, (minZ + maxZ) * 0.5f);
-        Vector3 size = new Vector3(maxX - minX, 0.1f, maxZ - minZ);
-        Gizmos.DrawWireCube(center, size);
 
-        // Yerle?tirilmi? nesnelerin pozisyonlar?n? görselle?tir
+        // Tüm alanlar? görselle?tir
+        foreach (var classifiedInfo in classifiedObjects)
+        {
+            SpawnZone zone = classifiedInfo.zone;
+            Vector3 center = new Vector3((zone.minX + zone.maxX) * 0.5f, zone.yPosition, (zone.minZ + zone.maxZ) * 0.5f);
+            Vector3 size = new Vector3(zone.maxX - zone.minX, 0.1f, zone.maxZ - zone.minZ);
+            Gizmos.DrawWireCube(center, size);
+        }
+
+        // Yerle?tirilen nesnelerin pozisyonlar?n? görselle?tir
+        Gizmos.color = Color.red;
         if (Application.isPlaying)
         {
-            Gizmos.color = Color.red;
             foreach (Vector3 pos in occupiedPositions)
             {
                 Gizmos.DrawWireSphere(pos, 0.5f);
@@ -139,5 +155,4 @@ public class LevelGenerator : MonoBehaviour
 
         GenerateLevel();
     }
-}
 }
