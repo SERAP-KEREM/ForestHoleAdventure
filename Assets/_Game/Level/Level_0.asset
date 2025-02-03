@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levelNumber: 1
   _targetScore: 1000
-  _levelTime: 180
+  _levelTime: 120
   _initialHoleSize: 2
   _maxHoleSize: 10
   _baseGrowthFactor: 0.001
   _scoreThresholdForGrowth: 500
   _growthAmount: 0.3
   _scoreThresholds: 64000000fa000000900100005802000020030000
-  _respawnInterval: 5
-  _minActiveObjects: 10

@@ -1,53 +1,45 @@
 using UnityEngine;
-using TMPro;
 using UnityEngine.Events;
 using _Main.Hole;
+
+using _Main.Managers;
+using _Main._UI;
 
 namespace _Main._Level
 {
     public class LevelManager : MonoBehaviour
     {
-        [Header("Level Settings")]
-        [SerializeField] private LevelData currentLevel;
+        [Header("References")]
         [SerializeField] private HoleManager holeManager;
+        [SerializeField] private GameplayUI gameplayUI;
+        [SerializeField] private UIManager uiManager;
 
-        [Header("UI References")]
-        [SerializeField] private TextMeshProUGUI scoreText;
-        [SerializeField] private TextMeshProUGUI timerText;
-        [SerializeField] private TextMeshProUGUI levelText;
-
-        public UnityEvent onLevelComplete;
-        public UnityEvent onLevelFailed;
-
+        private LevelData currentLevel;
         private int currentScore;
         private float remainingTime;
         private int currentThresholdIndex;
         private bool isGameActive;
 
-        private void Start()
+        public void InitializeLevel(LevelData levelData)
         {
-            InitializeLevel();
-        }
-
-        private void InitializeLevel()
-        {
+            currentLevel = levelData;
             currentScore = 0;
             remainingTime = currentLevel.LevelTime;
             currentThresholdIndex = 0;
             isGameActive = true;
 
-            // Ba?lang?ç hole boyutunu ayarla
             holeManager.SetHoleSize(currentLevel.InitialHoleSize);
-
-            UpdateUI();
-            levelText.text = $"Level {currentLevel.LevelNumber}";
+            gameplayUI.Initialize(
+                currentLevel.LevelNumber,
+                currentLevel.TargetScore,
+                currentLevel.ScoreThresholds
+            );
         }
 
         private void Update()
         {
             if (!isGameActive) return;
             UpdateTimer();
-            UpdateUI();
         }
 
         public void AddScore(int points)
@@ -56,7 +48,7 @@ namespace _Main._Level
 
             currentScore += points;
             CheckGrowthThreshold();
-            UpdateUI();
+            gameplayUI.UpdateScore(currentScore);
 
             if (currentScore >= currentLevel.TargetScore)
             {
@@ -80,6 +72,8 @@ namespace _Main._Level
         private void UpdateTimer()
         {
             remainingTime -= Time.deltaTime;
+            gameplayUI.UpdateTimer(remainingTime);
+
             if (remainingTime <= 0)
             {
                 remainingTime = 0;
@@ -87,27 +81,17 @@ namespace _Main._Level
             }
         }
 
-        private void UpdateUI()
-        {
-            scoreText.text = $"Score: {currentScore}/{currentLevel.TargetScore}";
-
-            int minutes = Mathf.FloorToInt(remainingTime / 60);
-            int seconds = Mathf.FloorToInt(remainingTime % 60);
-            timerText.text = $"{minutes:00}:{seconds:00}";
-        }
-
         private void LevelComplete()
         {
             isGameActive = false;
-            onLevelComplete?.Invoke();
-            Debug.Log("Level Complete!");
+            GameManager.Instance.LevelCompleted();
+            uiManager.ShowWinPanel();
         }
 
         private void LevelFailed()
         {
             isGameActive = false;
-            onLevelFailed?.Invoke();
-            Debug.Log("Level Failed!");
+            uiManager.ShowFailPanel();
         }
     }
 }

@@ -19,11 +19,6 @@ namespace _Main._Level
         [Header("Score Thresholds for Growth")]
         [SerializeField] private int[] _scoreThresholds = { 100, 250, 400, 600, 800 };
 
-
-        [Header("Spawn Settings")]
-        [SerializeField] private float _respawnInterval = 5f;
-        [SerializeField] private int _minActiveObjects = 10;
-
         // Getters
         // Public properties
         public int LevelNumber => _levelNumber;
@@ -32,10 +27,6 @@ namespace _Main._Level
         public float InitialHoleSize => _initialHoleSize;
         public float GrowthAmount => _growthAmount;
         public int[] ScoreThresholds => _scoreThresholds;
-        public float MaxHoleSize => _maxHoleSize;
-        public float BaseGrowthFactor => _baseGrowthFactor;
-        public int ScoreThresholdForGrowth => _scoreThresholdForGrowth;
-        public float RespawnInterval => _respawnInterval;
-        public int MinActiveObjects => _minActiveObjects;
+
     }
 }

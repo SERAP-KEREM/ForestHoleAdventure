@@ -147,7 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _collectDuration: 0.5
-  _spiralRadius: 0.5
-  _spiralRotations: 1.5
-  _fallHeight: 0.5
+  _fallDepth: 0.5
+  _fadeDuration: 1.5
   _type: 40
