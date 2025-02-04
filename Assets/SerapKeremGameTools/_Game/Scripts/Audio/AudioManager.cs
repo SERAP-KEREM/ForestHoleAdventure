@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using SerapKeremGameTools._Game._objectPool;
 using SerapKeremGameTools._Game._Singleton;
+using SerapKeremGameTools._Game._SaveLoadSystem;
 
 namespace SerapKeremGameTools._Game._AudioSystem
 {
@@ -39,7 +40,7 @@ namespace SerapKeremGameTools._Game._AudioSystem
 
             // Create the audio player pool with a capacity of poolSize
             InitializeAudioPlayerPool();
-
+            ApplySavedVolume();
             // Load the audio clips from Resources folder
             LoadAudioClips();
         }
@@ -50,6 +51,15 @@ namespace SerapKeremGameTools._Game._AudioSystem
         private void InitializeAudioPlayerPool()
         {
             audioPlayerPool = new ObjectPool<AudioPlayer>(audioPlayerPrefab, poolSize, transform);
+        }
+        private void ApplySavedVolume()
+        {
+            float savedVolume = LoadManager.LoadData<float>("MusicVolume", 1f);
+            AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+            foreach (var source in audioSources)
+            {
+                source.volume = savedVolume;
+            }
         }
 
         /// <summary>
@@ -78,7 +88,7 @@ namespace SerapKeremGameTools._Game._AudioSystem
         /// If the audio is already playing, it won't play again.
         /// </summary>
         /// <param name="audioName">The name of the audio clip to play.</param>
-        public void PlayAudio(string audioName)
+        public void PlayAudio(string audioName, bool loop = false)
         {
             // Find the audio clip by name
             Audio audio = audioClips.Find(a => a.Name == audioName);
@@ -95,7 +105,7 @@ namespace SerapKeremGameTools._Game._AudioSystem
 
                 // Get an AudioPlayer from the pool and play the audio
                 AudioPlayer audioPlayer = audioPlayerPool.GetObject();
-                audioPlayer.PlayAudio(audio);
+                audioPlayer.PlayAudio(audio, loop);  // Pass the loop parameter to the PlayAudio method
 
                 // Set the current playing audio to this one
                 currentAudio = audioName;
@@ -107,6 +117,8 @@ namespace SerapKeremGameTools._Game._AudioSystem
 #endif
             }
         }
+
+
 
         /// <summary>
         /// Pauses all active AudioSources in the scene.

@@ -1,42 +1,61 @@
 using UnityEngine;
 
-public class LayerManager : MonoBehaviour
+namespace _Main._Hole
 {
-    [SerializeField] private string[] _layers = { "Default", "noColl" };
-
-    private void OnTriggerEnter(Collider other)
+    /// <summary>
+    /// Manages the layer change of objects when they enter or exit the trigger area, based on their size.
+    /// </summary>
+    public class LayerManager : MonoBehaviour
     {
-        // Nesnenin boyutunu kontrol etmeden layer de?i?tirme
-        if (IsObjectSmallEnough(other))
+        #region Serialized Fields
+
+        [Header("Layer Settings")]
+        [SerializeField, Tooltip("List of layers to switch between. Index 0 for default, index 1 for noColl.")]
+        private string[] _layers = { "Default", "noColl" };
+
+        #endregion
+
+        private void OnTriggerEnter(Collider other)
         {
-            ChangeLayer(other, 1); // noColl layer'?
+            // Check if the object is small enough to trigger layer change
+            if (IsObjectSmallEnough(other))
+            {
+                ChangeLayer(other, 1);  // Change to 'noColl' layer
+            }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        // Nesne delikten ç?karsa layer'? eski haline döndür
-        ChangeLayer(other, 0); // Default layer
-    }
+        private void OnTriggerExit(Collider other)
+        {
+            // Restore layer to default when the object exits the trigger area
+            ChangeLayer(other, 0);  // Change back to 'Default' layer
+        }
 
-    private bool IsObjectSmallEnough(Collider other)
-    {
-        // Nesnenin boyutunu al ve deli?in boyutuyla kar??la?t?r
-        float objectSize = GetObjectSize(other.gameObject);
-        float holeSize = transform.localScale.x; // Deli?in boyutunu al
+        /// <summary>
+        /// Checks if the object is small enough to fit into the hole.
+        /// </summary>
+        private bool IsObjectSmallEnough(Collider other)
+        {
+            float objectSize = GetObjectSize(other.gameObject);
+            float holeSize = transform.localScale.x;
 
-        return objectSize <= holeSize; // Sadece küçük nesneler layer de?i?ikli?i yapabilir
-    }
+            return objectSize <= holeSize;
+        }
 
-    private void ChangeLayer(Collider other, int index)
-    {
-        other.gameObject.layer = LayerMask.NameToLayer(_layers[index]);
-    }
+        /// <summary>
+        /// Changes the layer of the object.
+        /// </summary>
+        private void ChangeLayer(Collider other, int index)
+        {
+            other.gameObject.layer = LayerMask.NameToLayer(_layers[index]);
+        }
 
-    private float GetObjectSize(GameObject obj)
-    {
-        // Nesnenin en büyük boyutunu almak için Collider'?n? kullan?yoruz
-        Bounds bounds = obj.GetComponent<Collider>().bounds;
-        return Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+        /// <summary>
+        /// Gets the maximum size of the object based on its collider's bounds.
+        /// </summary>
+        private float GetObjectSize(GameObject obj)
+        {
+            Bounds bounds = obj.GetComponent<Collider>().bounds;
+            return Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+        }
     }
 }

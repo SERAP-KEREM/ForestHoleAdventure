@@ -3,31 +3,75 @@ using DG.Tweening;
 
 namespace _Main._Objects
 {
+    /// <summary>
+    /// Handles the behavior of collectible items in the game, including their collection animation and properties.
+    /// </summary>
     public class CollectibleItem : MonoBehaviour
     {
+        #region Serialized Fields
+
         [Header("Collection Animation Settings")]
-        [SerializeField] private float _collectDuration = 2f; // Düşme süresi
-        [SerializeField] private float _fallDepth = 0.5f; // Delik içine düşme mesafesi
-        [SerializeField] private float _fadeDuration = 1.5f; // Şeffaflaşma süresi
+        [SerializeField, Tooltip("The duration of the collection animation.")]
+        private float _collectDuration = 2f;
+
+        [SerializeField, Tooltip("The depth at which the item falls during collection animation.")]
+        private float _fallDepth = 0.5f;
+
+        [SerializeField, Tooltip("The duration for fading the collectible item.")]
+        private float _fadeDuration = 1.5f;
 
         [Header("Object Settings")]
-        [SerializeField] private CollectibleType _type;
+        [SerializeField, Tooltip("The type of collectible item, used to determine score.")]
+        private CollectibleType _type;
+
+        #endregion
+
+        #region Private Variables
 
         private Material _material;
         private Color _originalColor;
         private float _size;
         private bool _isCollected;
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the score value associated with this collectible item based on its type.
+        /// </summary>
         public int Score => (int)_type;
+
+        /// <summary>
+        /// Gets the size of the collectible item.
+        /// </summary>
         public float Size => _size;
+
+        /// <summary>
+        /// Indicates whether the item has been collected.
+        /// </summary>
         public bool IsCollected => _isCollected;
 
+        #endregion
+
+        #region Unity Callbacks
+
+        /// <summary>
+        /// Called when the script is initialized. It calculates the size of the item and initializes its material.
+        /// </summary>
         private void Awake()
         {
             CalculateSize();
             InitializeMaterial();
         }
 
+        #endregion
+
+        #region Initialization
+
+        /// <summary>
+        /// Calculates the size of the collectible item based on its collider bounds.
+        /// </summary>
         private void CalculateSize()
         {
             Bounds bounds = GetComponent<Collider>().bounds;
@@ -36,6 +80,9 @@ namespace _Main._Objects
             Debug.Log($"Object {gameObject.name} calculated size: {_size}");
         }
 
+        /// <summary>
+        /// Initializes the material properties of the collectible item, enabling transparency and setup for fade effects.
+        /// </summary>
         private void InitializeMaterial()
         {
             Renderer renderer = GetComponent<Renderer>();
@@ -44,73 +91,51 @@ namespace _Main._Objects
                 _material = renderer.material;
                 _originalColor = _material.color;
 
-                // Materyali transparan moduna ayarla
-                _material.SetFloat("_Surface", 1); // Transparent
+                // Set the material to be transparent
+                _material.SetFloat("_Surface", 1);
                 _material.SetOverrideTag("RenderType", "Transparent");
-               
                 _material.SetInt("_ZWrite", 0);
                 _material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
                 _material.EnableKeyword("_ALPHABLEND_ON");
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Handles the collection of the item, animating it towards the hole and then deactivating it.
+        /// </summary>
+        /// <param name="holeTransform">The transform of the hole where the collectible item should move.</param>
         public void Collect(Transform holeTransform)
         {
             if (!_isCollected)
             {
                 _isCollected = true;
 
-                // Basit düşme animasyonu
+                // Animate the item moving towards the hole
                 transform.DOMove(holeTransform.position, _collectDuration)
                     .SetEase(Ease.InQuad);
 
-                // Hafif küçülme
+                // Animate the item scaling down to zero and deactivate it
                 transform.DOScale(Vector3.zero, _collectDuration)
                     .SetEase(Ease.InQuad)
                     .OnComplete(() =>
                     {
                         gameObject.SetActive(false);
-                        // Nesneyi orijinal haline getir
-                        transform.localScale = Vector3.one;
+                        transform.localScale = Vector3.one; // Reset scale after deactivation
                     });
             }
         }
 
-        private void PlayCollectAnimation(Transform holeTransform)
-        {
-            // Hedef pozisyon deliğin biraz altı
-            Vector3 targetPos = holeTransform.position - Vector3.up * _fallDepth;
+        #endregion
 
-            // Şeffaflaşma animasyonu
-            FadeOut();
+        #region Gizmos
 
-            // Yavaş bir şekilde deliğe doğru düşme animasyonu
-            transform.DOMove(targetPos, _collectDuration)
-                .SetEase(Ease.InOutQuad)
-                .OnComplete(() =>
-                {
-                    gameObject.SetActive(false);
-                });
-        }
-
-        private void FadeOut()
-        {
-            if (_material != null)
-            {
-                _material.DOFade(0f, _fadeDuration)
-                    .OnComplete(() =>
-                    {
-                        // Nesne tamamen şeffaf hale geldiğinde materyali eski haline döndür
-                        _material.color = _originalColor;
-                    });
-            }
-        }
-
-        private void OnDestroy()
-        {
-            transform.DOKill();
-        }
-
+        /// <summary>
+        /// Draws a gizmo to visualize the size of the collectible item in the scene view when selected.
+        /// </summary>
         private void OnDrawGizmosSelected()
         {
             if (Application.isPlaying)
@@ -120,5 +145,7 @@ namespace _Main._Objects
                 Gizmos.DrawWireCube(transform.position, size);
             }
         }
+
+        #endregion
     }
 }

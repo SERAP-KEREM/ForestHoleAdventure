@@ -20,23 +20,24 @@ namespace SerapKeremGameTools._Game._AudioSystem
         /// Plays the given audio clip with the specified settings.
         /// </summary>
         /// <param name="audio">Audio settings to play</param>
-        public void PlayAudio(Audio audio)
+        public void PlayAudio(Audio audio, bool loop)
         {
-            if (!audioSource.isPlaying)  // Eğer ses zaten çalmıyorsa
+            if (!audioSource.isPlaying)  // If the audio is not already playing
             {
                 audioSource.clip = audio.Clip;
-                audioSource.volume = audio.Volume;
-                audioSource.pitch = audio.Volume;
-                audioSource.loop = audio.Loop;
+                audioSource.volume = audio.Volume;  // Set volume
+                audioSource.pitch = audio.Pitch;    // Set pitch
+                audioSource.loop = loop;            // Set the loop based on the parameter
                 audioSource.Play();
 
-                // Eğer ses döngü yapmıyorsa, bitince havuza geri dönsün
-                if (!audio.Loop)
+                // If the audio doesn't loop, return it to the pool after it finishes
+                if (!loop)
                 {
                     StartCoroutine(ReturnToPoolAfterPlaying(audio));
                 }
             }
         }
+
 
 
         /// <summary>

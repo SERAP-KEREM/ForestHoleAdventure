@@ -1,0 +1,345 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8425807804475720602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 278426030611628499}
+  - component: {fileID: 7917650355175934649}
+  m_Layer: 0
+  m_Name: LevelGenerator_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &278426030611628499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8425807804475720602}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -502.92682, y: -418.70776, z: 1.9821196}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7917650355175934649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8425807804475720602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05baec0829b77e04880d34a2563dd328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classifiedObjects:
+  - classification: Decorations
+    zone:
+      name: Decorations
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 739508447745405468, guid: 58bb0932035e6244da43aa6555237548, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 7025850698687510511, guid: c008c478058bc874f8f32b171c4b1ee0, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 5203747199716049333, guid: fc7441f6c1ae1074da8bd1bc19202e4f, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 1222292548923609526, guid: 9e9e75924930ded46a35edb54a7097aa, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 8882071126851513211, guid: 2878564938d12f54baa7e8ddfb5c8aa6, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 1847314746121620798, guid: 402463b093136a240ac196af19084b08, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 3405595187927940990, guid: a2abf14d5d6554c499f3e955df14a958, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 1709178268790177986, guid: 71d35678a4def6a44862faf92e025c2d, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 3067427148342524127, guid: 9d30b34b298c7f141b6ba669c3199236, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 3430503591382568537, guid: f22504b136f3a89488129fe43e7e9224, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 3452883908866724899, guid: 76d38dbb0e5d2b644a02bc8bc26b8054, type: 3}
+      count: 3
+      minSpacing: 5
+    - prefab: {fileID: 7069463263464945401, guid: ee9e99df0add3e0448ef16ff00fc9b31, type: 3}
+      count: 3
+      minSpacing: 5
+  - classification: Houses
+    zone:
+      name: Houses
+      minX: -30
+      maxX: 30
+      minZ: -30
+      maxZ: 30
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 1562593511877998795, guid: a85613d2d6e969945887080b3bc367d9, type: 3}
+      count: 2
+      minSpacing: 3
+    - prefab: {fileID: 7677721585013565422, guid: e3322081f77790a488803678602d66d3, type: 3}
+      count: 2
+      minSpacing: 3
+    - prefab: {fileID: 3980256709626528515, guid: 718e05fe641adfa48b8e64271578298f, type: 3}
+      count: 3
+      minSpacing: 3
+    - prefab: {fileID: 9028305481679333543, guid: 40885a84113bd544f9643a1c86fdb897, type: 3}
+      count: 3
+      minSpacing: 3
+  - classification: Plants
+    zone:
+      name: Plants
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 1039836684414553810, guid: 211436d5239ea5c418e1d74607b69825, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 3421256615221066088, guid: d3d043c8dcd03e54085d140d4018f732, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 6444917846903685956, guid: f6ba9ff56eff3624282877e876d82c41, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 233593839597940198, guid: 8f1e4ceb0c8a1dd45aba986e8c0edc2c, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 4757913574229565715, guid: 6557a2f5fc60dc44f8798307529ea6b2, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 3184206903139876333, guid: 2d1f86b26c32e964a8026de7b650d72a, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 4862511433970898517, guid: 83b8797eeb66acf4da12e9a3c691de62, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 252696113367693931, guid: c1db58ece33cb004d86b417f1737fd5b, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 7015702425392139230, guid: d2c0f9aea5abf6341b2f7e84b4e07037, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 7943684617045198095, guid: c295910e39cb5b947a7e7df82bf924bb, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 8050570616562827888, guid: 5f523b1b2b8787946bee836b075546ba, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 5667859709355584254, guid: c936fcdbf1942a8428f474b1d55a5650, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 7236050455718240553, guid: 41083992f911024438a1635785f389a3, type: 3}
+      count: 5
+      minSpacing: 2
+  - classification: Rocks
+    zone:
+      name: Rocks
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 7207745456751111778, guid: 5085df3350ea1624bb3a41e62853602d, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 6056861598271883246, guid: fbc51a35a2879f74d90df837dd1de556, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 8155032351118303691, guid: 280ea58d8b2193043b67121be98c40bd, type: 3}
+      count: 5
+      minSpacing: 2
+    - prefab: {fileID: 1282498036445410261, guid: 084f2dea025c13248ba2e9df76d219f9, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 4401325383752292111, guid: 20355c5a1699c644da157dca7d2988fc, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 8436375838170899526, guid: 4a092a6515699734c97c14908e6950e6, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 1932527772173605773, guid: 9262a1e7479f8ff459e4e75430db4a62, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 4856703358054291088, guid: f275caa61075c474f946365c6a716a47, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 8308031950469875999, guid: 3b5e20c3aa2ce8741a4e24137492ed51, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 3539587176760497276, guid: 12e2a6529d1bf8044a7062c121908a92, type: 3}
+      count: 2
+      minSpacing: 2
+    - prefab: {fileID: 6298899845371187418, guid: a30ebdf052045d8448bb9c08f7f4b2c8, type: 3}
+      count: 1
+      minSpacing: 2
+  - classification: Trees
+    zone:
+      name: Trees
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 3743887058419754457, guid: 98cdb4c398df77a4caea43077c2532e2, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 1155078965956161638, guid: ebd16b3abdb67474ba8bd9ffb7b29b69, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7006478701848604538, guid: b139a355b24a52c45bf1d5010b1d5ab8, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 4403747286760410074, guid: eba5a450183a55442a562b50bb2d5589, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7014031417605653235, guid: 53eab9b5b1dab144c8258e8dd6e24c24, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7363196326695920568, guid: dd3a73f8c145f624885c8c5738bf7157, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 4039017947394627846, guid: 8d5c4e17fce78db4e9d7697e973b9efc, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 1005738877441080339, guid: 02f1bfd3e5f938c4b88fd16ad4f95e6a, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 3699880616381706349, guid: ca3c70300dbaba349909991e0ede40b3, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 3527089249747746843, guid: 21efa5caa42c578489f1d00bdcc349c5, type: 3}
+      count: 3
+      minSpacing: 2
+  - classification: Woods
+    zone:
+      name: Woods
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 786580619863807619, guid: e68d28f2829e35d4f8611fad6bf9e331, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7333011386341851411, guid: f7ff52da5e801534abe3d185af0cfd26, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 1718816716676723442, guid: 439cd20328c13b742b6472c1a6b425ee, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7766320339118412546, guid: 64d2d1f315eb13f458583be6cd159711, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 2287282559995954594, guid: 528c21589acc98e488020a18fa4d730a, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 3346442779769047184, guid: ec4c4c6f4fe93914ea67558bf3ebcb96, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6403730567423333670, guid: 9634265311f9d0748bc935438cf32955, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 1986316412809054310, guid: bcc00fc8be7f5524a916ce993edd0f60, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 3975100205530743945, guid: 78decedd28756ce4a97d6ad91be551c2, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 5734832785531539009, guid: 15b1468285b85db45a8637a94c7b66bd, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7529092083188588240, guid: 9bdd883cafdba9843b576f0f122e0660, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6374555774275965294, guid: 1eddea82c0cc3f7458bf5804d068d847, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6577606093920515800, guid: 9b7bc7c81dfd746458c887d4d4cee554, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 8548276171955723790, guid: aeec0428fc0fc2449a742349452c4f00, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 5099584400978428105, guid: 15eeaa8fbe87c794abc680c3a958a867, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6317422225119568, guid: 84477be3b3b666c40baebfc65634aa8f, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 8509327565521484460, guid: dd8dd1377d6536248b1355340468a6f3, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7337525788419096035, guid: 0ed71eb3a8f7afe44a5de15f5a84ff3a, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 79772932354064266, guid: b92c483c8eb4da041ba50e3d568d362e, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 7819166891656453330, guid: 150e116939e701e49b530458a8afe698, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6192246674399298007, guid: 006bd3be91673504095128434d6ee381, type: 3}
+      count: 3
+      minSpacing: 2
+  - classification: Animals
+    zone:
+      name: Animals
+      minX: -50
+      maxX: 50
+      minZ: -50
+      maxZ: 50
+      yPosition: 2
+    objectsToSpawn:
+    - prefab: {fileID: 1009200002385053497, guid: 315409247b7cb9c4fbe65ab685eb51d7, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 3023653969640622459, guid: 6a1308ebbc554fa49a02200f69ba1ab2, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 4717933168451462790, guid: e6a3bed32a2a39743b7905661faf717e, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 5186341067905074382, guid: 8b5e22930ad65a846ab7a6c9cb636eb5, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6227786767267920901, guid: 2bea5299f38467d448215e26b4bafbf6, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 6815759785505773517, guid: 49d2559466110bc4180efcd602108036, type: 3}
+      count: 3
+      minSpacing: 2
+    - prefab: {fileID: 5121902115591209967, guid: aa72da92cf0e13444af33c258553a781, type: 3}
+      count: 3
+      minSpacing: 2
+  showDebugGizmos: 1

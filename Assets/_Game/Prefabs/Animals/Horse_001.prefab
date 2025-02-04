@@ -1257,10 +1257,11 @@ MonoBehaviour:
   runSpeed: 5
   rotationSpeed: 120
   moveRadius: 30
-  holeDetectionRadius: 10
+  holeDetectionRadius: 5
   obstacleCheckDistance: 2
   idleDurationMin: 2
   idleDurationMax: 5
+  size: 1
 --- !u!114 &654142404638564354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1314,7 +1315,7 @@ NavMeshAgent:
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 7
   m_BaseOffset: 0.2

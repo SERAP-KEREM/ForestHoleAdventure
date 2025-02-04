@@ -1,38 +1,96 @@
 using UnityEngine;
-using _Main.InputSystem;
 using _Main._Level;
+using _Main._InputSystem;
 
-namespace _Main.Hole
+namespace _Main._Hole
 {
-
+    /// <summary>
+    /// Controller responsible for handling the hole's movement and input.
+    /// </summary>
     public class HoleController : MonoBehaviour
     {
-        [SerializeField] private LevelManager levelManager;
-        [SerializeField] private float moveSpeed = 5f;
-        [SerializeField] private FloatingJoystick floatingJoystick;
-        [SerializeField] private KeyboardInput keyboardInput;
+        #region Serialized Fields
+
+        [Header("Level Settings")]
+        [SerializeField, Tooltip("Reference to the Level Manager.")]
+        private LevelManager _levelManager;
+
+        [Header("Movement Settings")]
+        [SerializeField, Tooltip("Movement speed of the hole.")]
+        private float _moveSpeed = 5f;
+
+        [Header("Input Settings")]
+        [SerializeField, Tooltip("Floating joystick for mobile input.")]
+        private FloatingJoystick _floatingJoystick;
+
+        [SerializeField, Tooltip("Keyboard input handler for desktop control.")]
+        private KeyboardInput _keyboardInput;
+
+        #endregion
+
+        private bool _isControlEnabled = true;
 
         private void Start()
         {
-            // Sahnedeki FloatingJoystick ve KeyboardInput bileşenlerini bul
-            floatingJoystick = FindObjectOfType<FloatingJoystick>();
-            keyboardInput = FindObjectOfType<KeyboardInput>();
+            // Find input system objects in the scene if not already assigned
+            if (_floatingJoystick == null)
+            {
+                _floatingJoystick = FindObjectOfType<FloatingJoystick>();
+            }
+
+            if (_keyboardInput == null)
+            {
+                _keyboardInput = FindObjectOfType<KeyboardInput>();
+            }
         }
+
         private void Update()
         {
-            HandleMovement();
+            // Handle movement when control is enabled
+            if (_isControlEnabled)
+            {
+                HandleMovement();
+            }
         }
 
+        /// <summary>
+        /// Handles the movement input and updates the hole's position.
+        /// </summary>
         private void HandleMovement()
         {
-            // Joystick ve klavye inputlarını birleştir
-            float horizontal = floatingJoystick.Horizontal + keyboardInput.Horizontal;
-            float vertical = floatingJoystick.Vertical + keyboardInput.Vertical;
+            // Get input from both the joystick and keyboard
+            float horizontal = _floatingJoystick.Horizontal + _keyboardInput.Horizontal;
+            float vertical = _floatingJoystick.Vertical + _keyboardInput.Vertical;
 
+            // Calculate the movement direction and normalize it
             Vector3 movement = new Vector3(horizontal, 0f, vertical).normalized;
-            transform.Translate(movement * moveSpeed * Time.deltaTime, Space.World);
+
+            // Move the hole based on the calculated direction and speed
+            transform.Translate(movement * _moveSpeed * Time.deltaTime, Space.World);
         }
 
-       
+        /// <summary>
+        /// Enables the control for the hole (e.g., for player input).
+        /// </summary>
+        public void EnableControl()
+        {
+            _isControlEnabled = true;
+            if (_floatingJoystick != null)
+            {
+                _floatingJoystick.Enable();
+            }
+        }
+
+        /// <summary>
+        /// Disables the control for the hole (e.g., to stop player input).
+        /// </summary>
+        public void DisableControl()
+        {
+            _isControlEnabled = false;
+            if (_floatingJoystick != null)
+            {
+                _floatingJoystick.Disable();
+            }
+        }
     }
 }

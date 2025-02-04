@@ -6,35 +6,66 @@ namespace _Main._UI
 {
     public class WinPanel : MonoBehaviour
     {
+        [Header("UI Buttons")]
         [SerializeField] private Button _nextLevelButton;
         [SerializeField] private Button _restartButton;
 
+        private UIManager _uiManager;
+
+        #region Initialization
+
+        /// <summary>
+        /// Initializes the WinPanel, sets up button listeners.
+        /// </summary>
         private void Awake()
         {
-            _nextLevelButton.onClick.AddListener(OnNextLevelClicked);
-            _restartButton.onClick.AddListener(OnRestartClicked);
+            _uiManager = GetComponentInParent<UIManager>();
+            SetupButtons();
         }
 
+        /// <summary>
+        /// Sets up the button listeners for next level and restart actions.
+        /// </summary>
+        private void SetupButtons()
+        {
+            if (_nextLevelButton != null)
+                _nextLevelButton.onClick.AddListener(() => _uiManager.NextLevel());
+
+            if (_restartButton != null)
+                _restartButton.onClick.AddListener(() => _uiManager.RestartGame());
+        }
+
+        #endregion
+
+        #region UI Control
+
+        /// <summary>
+        /// Displays the win panel with an animation.
+        /// </summary>
         public void Show()
         {
             gameObject.SetActive(true);
-            transform.DOScale(Vector3.one, 0.3f).From(Vector3.zero).SetEase(Ease.OutBack);
+            transform.localScale = Vector3.zero;
+            transform.DOScale(Vector3.one, 0.3f)
+                .SetEase(Ease.OutBack)
+                .SetUpdate(true);
         }
 
-        public void Hide()
+        #endregion
+
+        #region Cleanup
+
+        /// <summary>
+        /// Removes all button listeners to prevent memory leaks.
+        /// </summary>
+        private void OnDestroy()
         {
-            transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack)
-                .OnComplete(() => gameObject.SetActive(false));
+            if (_nextLevelButton != null)
+                _nextLevelButton.onClick.RemoveAllListeners();
+            if (_restartButton != null)
+                _restartButton.onClick.RemoveAllListeners();
         }
 
-        private void OnNextLevelClicked()
-        {
-            FindObjectOfType<UIManager>().NextLevel();
-        }
-
-        private void OnRestartClicked()
-        {
-            FindObjectOfType<UIManager>().RestartLevel();
-        }
+        #endregion
     }
 }

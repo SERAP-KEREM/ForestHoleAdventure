@@ -1,158 +1,223 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class LevelGenerator : MonoBehaviour
+namespace _Main._Level
 {
-    [System.Serializable]
-    public class SpawnZone
+    public class LevelGenerator : MonoBehaviour
     {
-        public string name; // Örne?in: "Trees", "Rocks", "Homes"
-        public float minX;
-        public float maxX;
-        public float minZ;
-        public float maxZ;
-        public float yPosition = 0f;
-    }
+        #region Serialized Classes
 
-    [System.Serializable]
-    public class ObjectSpawnInfo
-    {
-        public GameObject prefab; // Spawn edilecek prefab
-        public int count; // Kaç tane spawn edilece?i
-        [Range(1f, 5f)] public float minSpacing = 2f; // Minimum mesafe
-    }
-
-    [System.Serializable]
-    public class ClassifiedSpawnInfo
-    {
-        public string classification; // Örne?in: "Trees", "Rocks", "Homes"
-        public SpawnZone zone; // S?n?fa ait alan (zone)
-        public List<ObjectSpawnInfo> objectsToSpawn; // O alandaki nesneler
-    }
-
-    [Header("Classified Spawn Settings")]
-    [SerializeField] private List<ClassifiedSpawnInfo> classifiedObjects;
-
-    [Header("Debug Settings")]
-    [SerializeField] private bool showDebugGizmos = true;
-
-    private List<Vector3> occupiedPositions = new List<Vector3>();
-
-    private void Start()
-    {
-        GenerateLevel();
-    }
-
-    public void GenerateLevel()
-    {
-        occupiedPositions.Clear();
-
-        foreach (var classifiedInfo in classifiedObjects)
+        [System.Serializable]
+        public class SpawnZone
         {
-            SpawnObjectsInZone(classifiedInfo);
+            [Tooltip("Name of the spawn zone.")]
+            public string name;
+            [Tooltip("Minimum X position of the zone.")]
+            public float minX;
+            [Tooltip("Maximum X position of the zone.")]
+            public float maxX;
+            [Tooltip("Minimum Z position of the zone.")]
+            public float minZ;
+            [Tooltip("Maximum Z position of the zone.")]
+            public float maxZ;
+            [Tooltip("Y position of the spawn zone.")]
+            public float yPosition = 0f;
         }
-    }
 
-    private void SpawnObjectsInZone(ClassifiedSpawnInfo classifiedInfo)
-    {
-        foreach (var objectInfo in classifiedInfo.objectsToSpawn)
+        [System.Serializable]
+        public class ObjectSpawnInfo
         {
-            int attempts = 0;
-            int maxAttempts = objectInfo.count * 100; // Sonsuz döngüyü önlemek için
-            int spawned = 0;
+            [Tooltip("Prefab to spawn.")]
+            public GameObject prefab;
+            [Tooltip("Number of objects to spawn.")]
+            public int count;
+            [Tooltip("Minimum spacing between objects.")]
+            [Range(1f, 5f)] public float minSpacing = 2f;
+        }
 
-            while (spawned < objectInfo.count && attempts < maxAttempts)
+        [System.Serializable]
+        public class ClassifiedSpawnInfo
+        {
+            [Tooltip("Classification of the spawn area (e.g., 'Forest', 'Desert').")]
+            public string classification;
+            [Tooltip("The spawn zone for this classification.")]
+            public SpawnZone zone;
+            [Tooltip("List of objects to spawn in this classification.")]
+            public List<ObjectSpawnInfo> objectsToSpawn;
+        }
+
+        #endregion
+
+        #region Serialized Fields
+
+        [Header("Classified Spawn Settings")]
+        [Tooltip("List of classified spawn zones and their objects.")]
+        [SerializeField] private List<ClassifiedSpawnInfo> classifiedObjects;
+
+        [Header("Debug Settings")]
+        [Tooltip("Toggle to show gizmos in the editor.")]
+        [SerializeField] private bool showDebugGizmos = true;
+
+        private List<Vector3> occupiedPositions = new List<Vector3>();
+
+        #endregion
+
+        #region Unity Lifecycle Methods
+
+        /// <summary>
+        /// Starts the level generation process when the game begins.
+        /// </summary>
+        private void Start()
+        {
+            GenerateLevel();
+        }
+
+        #endregion
+
+        #region Level Generation Methods
+
+        /// <summary>
+        /// Generates the level by spawning objects in their classified zones.
+        /// Clears the occupied positions before starting the generation process.
+        /// </summary>
+        public void GenerateLevel()
+        {
+            occupiedPositions.Clear();
+
+            foreach (var classifiedInfo in classifiedObjects)
             {
-                Vector3 position = GetRandomPositionInZone(classifiedInfo.zone);
+                SpawnObjectsInZone(classifiedInfo);
+            }
+        }
 
-                if (IsPositionValid(position, objectInfo.minSpacing))
+        /// <summary>
+        /// Spawns objects in a specific zone based on the classified spawn information.
+        /// Tries to spawn objects and ensures proper spacing.
+        /// </summary>
+        /// <param name="classifiedInfo">The classified spawn information including the zone and objects.</param>
+        private void SpawnObjectsInZone(ClassifiedSpawnInfo classifiedInfo)
+        {
+            foreach (var objectInfo in classifiedInfo.objectsToSpawn)
+            {
+                int attempts = 0;
+                int maxAttempts = objectInfo.count * 100;
+                int spawned = 0;
+
+                while (spawned < objectInfo.count && attempts < maxAttempts)
                 {
-                    GameObject obj = Instantiate(objectInfo.prefab, position, Quaternion.Euler(0, Random.Range(0f, 360f), 0), transform);
-                    occupiedPositions.Add(position);
-                    spawned++;
+                    Vector3 position = GetRandomPositionInZone(classifiedInfo.zone);
 
-                    Debug.Log($"Spawned {objectInfo.prefab.name} in {classifiedInfo.classification} zone at {position}");
+                    if (IsPositionValid(position, objectInfo.minSpacing))
+                    {
+                        GameObject obj = Instantiate(objectInfo.prefab, position, Quaternion.Euler(0, Random.Range(0f, 360f), 0), transform);
+                        occupiedPositions.Add(position);
+                        spawned++;
+
+                        Debug.Log($"Spawned {objectInfo.prefab.name} in {classifiedInfo.classification} zone at {position}");
+                    }
+
+                    attempts++;
                 }
 
-                attempts++;
+                if (attempts >= maxAttempts)
+                {
+                    Debug.LogWarning($"Couldn't spawn all requested {objectInfo.prefab.name} in zone {classifiedInfo.classification}. Space might be too crowded.");
+                }
             }
+        }
 
-            if (attempts >= maxAttempts)
+        /// <summary>
+        /// Gets a random position within a specified spawn zone.
+        /// </summary>
+        /// <param name="zone">The spawn zone where the position will be chosen.</param>
+        /// <returns>A random position within the spawn zone.</returns>
+        private Vector3 GetRandomPositionInZone(SpawnZone zone)
+        {
+            float x = Random.Range(zone.minX, zone.maxX);
+            float z = Random.Range(zone.minZ, zone.maxZ);
+            return new Vector3(x, zone.yPosition, z);
+        }
+
+        /// <summary>
+        /// Checks if a position is valid by ensuring it has enough spacing from other objects and is on the ground.
+        /// </summary>
+        /// <param name="position">The position to check.</param>
+        /// <param name="minSpacing">The minimum allowed spacing between objects.</param>
+        /// <returns>True if the position is valid; otherwise, false.</returns>
+        private bool IsPositionValid(Vector3 position, float minSpacing)
+        {
+            foreach (Vector3 occupiedPos in occupiedPositions)
             {
-                Debug.LogWarning($"Couldn't spawn all requested {objectInfo.prefab.name} in zone {classifiedInfo.classification}. Space might be too crowded.");
+                if (Vector3.Distance(position, occupiedPos) < minSpacing)
+                {
+                    return false;
+                }
             }
-        }
-    }
 
-    private Vector3 GetRandomPositionInZone(SpawnZone zone)
-    {
-        float x = Random.Range(zone.minX, zone.maxX);
-        float z = Random.Range(zone.minZ, zone.maxZ);
-        return new Vector3(x, zone.yPosition, z);
-    }
-
-    private bool IsPositionValid(Vector3 position, float minSpacing)
-    {
-        foreach (Vector3 occupiedPos in occupiedPositions)
-        {
-            if (Vector3.Distance(position, occupiedPos) < minSpacing)
+            Ray ray = new Ray(position + Vector3.up * 10f, Vector3.down);
+            if (Physics.Raycast(ray, out RaycastHit hit, 20f))
             {
-                return false;
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        // Raycast ile zemin kontrolü (iste?e ba?l?)
-        Ray ray = new Ray(position + Vector3.up * 10f, Vector3.down);
-        if (Physics.Raycast(ray, out RaycastHit hit, 20f))
+        #endregion
+
+        #region Gizmo Debugging
+
+        /// <summary>
+        /// Draws debug gizmos for the spawn zones and occupied positions when the object is selected in the scene view.
+        /// </summary>
+        private void OnDrawGizmosSelected()
         {
-            if (hit.collider.CompareTag("Ground")) // Plane'e "Ground" tag'i ekleyin
+            if (!showDebugGizmos) return;
+
+            Gizmos.color = Color.green;
+
+            foreach (var classifiedInfo in classifiedObjects)
             {
-                return true;
+                SpawnZone zone = classifiedInfo.zone;
+                Vector3 center = new Vector3((zone.minX + zone.maxX) * 0.5f, zone.yPosition, (zone.minZ + zone.maxZ) * 0.5f);
+                Vector3 size = new Vector3(zone.maxX - zone.minX, 0.1f, zone.maxZ - zone.minZ);
+                Gizmos.DrawWireCube(center, size);
             }
-        }
 
-        return false;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (!showDebugGizmos) return;
-
-        Gizmos.color = Color.green;
-
-        // Tüm alanlar? görselle?tir
-        foreach (var classifiedInfo in classifiedObjects)
-        {
-            SpawnZone zone = classifiedInfo.zone;
-            Vector3 center = new Vector3((zone.minX + zone.maxX) * 0.5f, zone.yPosition, (zone.minZ + zone.maxZ) * 0.5f);
-            Vector3 size = new Vector3(zone.maxX - zone.minX, 0.1f, zone.maxZ - zone.minZ);
-            Gizmos.DrawWireCube(center, size);
-        }
-
-        // Yerle?tirilen nesnelerin pozisyonlar?n? görselle?tir
-        Gizmos.color = Color.red;
-        if (Application.isPlaying)
-        {
-            foreach (Vector3 pos in occupiedPositions)
-            {
-                Gizmos.DrawWireSphere(pos, 0.5f);
-            }
-        }
-    }
-
-    // Editor'da test için
-    [ContextMenu("Generate Level")]
-    public void GenerateLevelFromEditor()
-    {
-        // Mevcut nesneleri temizle
-        foreach (Transform child in transform)
-        {
+            Gizmos.color = Color.red;
             if (Application.isPlaying)
-                Destroy(child.gameObject);
-            else
-                DestroyImmediate(child.gameObject);
+            {
+                foreach (Vector3 pos in occupiedPositions)
+                {
+                    Gizmos.DrawWireSphere(pos, 0.5f);
+                }
+            }
         }
 
-        GenerateLevel();
+        #endregion
+
+        #region Editor Methods
+
+        /// <summary>
+        /// Generates the level directly from the editor using the context menu. Destroys existing objects first.
+        /// </summary>
+        [ContextMenu("Generate Level")]
+        public void GenerateLevelFromEditor()
+        {
+            foreach (Transform child in transform)
+            {
+                if (Application.isPlaying)
+                    Destroy(child.gameObject);
+                else
+                    DestroyImmediate(child.gameObject);
+            }
+
+            GenerateLevel();
+        }
+
+        #endregion
     }
 }

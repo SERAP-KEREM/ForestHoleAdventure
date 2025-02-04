@@ -5,6 +5,15 @@ using UnityEngine.EventSystems;
 
 public class FloatingJoystick : Joystick
 {
+    private CanvasGroup _canvasGroup;
+    private void Awake()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null)
+        {
+            _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+    }
     protected override void Start()
     {
         base.Start();
@@ -22,5 +31,19 @@ public class FloatingJoystick : Joystick
     {
         background.gameObject.SetActive(false);
         base.OnPointerUp(eventData);
+    }
+
+    public void Enable()
+    {
+        _canvasGroup.alpha = 1f;
+        _canvasGroup.blocksRaycasts = true;
+        _canvasGroup.interactable = true;
+    }
+
+    public void Disable()
+    {
+        _canvasGroup.alpha = 0f;
+        _canvasGroup.blocksRaycasts = false;
+        _canvasGroup.interactable = false;
     }
 }

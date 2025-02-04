@@ -2,48 +2,102 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using TriInspector;
+
 namespace _Main._UI
 {
-
-
+    /// <summary>
+    /// Manages the gameplay UI elements like score, level, timer, and score progress.
+    /// Provides functionalities to update score, timer, and display threshold marks.
+    /// </summary>
     public class GameplayUI : MonoBehaviour
     {
         [Header("Text Elements")]
-        [SerializeField] private TextMeshProUGUI _levelText;
-        [SerializeField] private TextMeshProUGUI _timerText;
-        [SerializeField] private TextMeshProUGUI _scoreText;
+        [Tooltip("Text displaying the current level number.")]
+        [SerializeField, Required] private TextMeshProUGUI _levelText;
+        
+        [Tooltip("Text displaying the remaining time.")]
+        [SerializeField, Required] private TextMeshProUGUI _timerText;
+        
+        [Tooltip("Text displaying the current score and target score.")]
+        [SerializeField, Required] private TextMeshProUGUI _scoreText;
 
         [Header("Buttons")]
-        [SerializeField] private Button _settingsButton;
+        [Tooltip("Button to open the settings panel.")]
+        [SerializeField, Required] private Button _settingsButton;
 
         [Header("Score Progress")]
-        [SerializeField] private Slider _scoreSlider;
-        [SerializeField] private RectTransform _sliderMarksContainer;
-        [SerializeField] private GameObject _thresholdMarkPrefab;
+        [Tooltip("Slider showing the current score progress.")]
+        [SerializeField, Required] private Slider _scoreSlider;
+
+        [Tooltip("Container for score threshold marks.")]
+        [SerializeField, Required] private RectTransform _sliderMarksContainer;
+
+        [Tooltip("Prefab for threshold marks.")]
+        [SerializeField, Required] private GameObject _thresholdMarkPrefab;
 
         [Header("Visual Settings")]
+        [Tooltip("Color of the threshold marks when not reached.")]
         [SerializeField] private Color _normalMarkColor = Color.white;
+        
+        [Tooltip("Color of the threshold marks when reached.")]
         [SerializeField] private Color _reachedMarkColor = Color.green;
+
+        [Tooltip("Width of the threshold marks.")]
         [SerializeField] private float _markWidth = 4f;
+
+        [Tooltip("Height of the threshold marks.")]
         [SerializeField] private float _markHeight = 20f;
 
         private UIManager _uiManager;
-
         private int _targetScore;
         private int[] _thresholds;
         private Image[] _thresholdMarks;
 
+        /// <summary>
+        /// Initializes references and button interactions.
+        /// </summary>
         private void Awake()
         {
             _uiManager = GetComponentInParent<UIManager>();
+            SetupSettingsButton();
+            ValidateReferences();
+        }
+
+        /// <summary>
+        /// Validates the essential UI references.
+        /// </summary>
+        private void ValidateReferences()
+        {
+            if (_levelText == null) Debug.LogError("Level Text is missing!");
+            if (_scoreText == null) Debug.LogError("Score Text is missing!");
+            if (_timerText == null) Debug.LogError("Timer Text is missing!");
+            if (_scoreSlider == null) Debug.LogError("Score Slider is missing!");
+            if (_settingsButton == null) Debug.LogError("Settings Button is missing!");
+        }
+
+        /// <summary>
+        /// Sets up the settings button click listener.
+        /// </summary>
+        private void SetupSettingsButton()
+        {
             if (_settingsButton != null)
             {
-                _settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+                _settingsButton.onClick.RemoveAllListeners();
+                _settingsButton.onClick.AddListener(() => _uiManager.ShowSettings());
             }
         }
 
+        /// <summary>
+        /// Initializes the gameplay UI with level, target score, and thresholds.
+        /// </summary>
+        /// <param name="levelNumber">The level number.</param>
+        /// <param name="targetScore">The target score for this level.</param>
+        /// <param name="thresholds">The score thresholds to track.</param>
         public void Initialize(int levelNumber, int targetScore, int[] thresholds)
         {
+            Debug.Log($"Initializing GameplayUI: Level {levelNumber}, Target {targetScore}");
+
             _targetScore = targetScore;
             _thresholds = thresholds;
 
@@ -51,33 +105,47 @@ namespace _Main._UI
             SetupScoreSlider();
             CreateThresholdMarks();
         }
-        private void OnSettingsButtonClicked()
-        {
-            if (_uiManager != null)
-            {
-                _uiManager.ShowSettings();
-            }
-        }
+
+        /// <summary>
+        /// Sets up the UI elements with initial values.
+        /// </summary>
         private void SetupUI(int levelNumber)
         {
-            _levelText.text = $"Level {levelNumber}";
-            _scoreText.text = $"0/{_targetScore}";
+            if (_levelText != null)
+            {
+                _levelText.text = $"LEVEL {levelNumber}";
+            }
+
+            if (_scoreText != null)
+            {
+                _scoreText.text = $"0/{_targetScore}";
+            }
+
+            if (_timerText != null)
+            {
+                _timerText.text = "00:00";
+            }
         }
 
+        /// <summary>
+        /// Configures the score slider based on the target score.
+        /// </summary>
         private void SetupScoreSlider()
         {
             _scoreSlider.minValue = 0;
             _scoreSlider.maxValue = _targetScore;
             _scoreSlider.value = 0;
 
-            // Slider fill'in rengini ayarla
             Image fillImage = _scoreSlider.fillRect.GetComponent<Image>();
-            fillImage.color = new Color(0.2f, 0.8f, 0.2f); // Ye?ilimsi bir renk
+            fillImage.color = new Color(0.2f, 0.8f, 0.2f); 
         }
 
-
+        /// <summary>
+        /// Creates marks on the score slider based on the score thresholds.
+        /// </summary>
         private void CreateThresholdMarks()
         {
+            // Clear existing marks
             foreach (Transform child in _sliderMarksContainer)
             {
                 Destroy(child.gameObject);
@@ -91,7 +159,6 @@ namespace _Main._UI
                 RectTransform markRect = markObj.GetComponent<RectTransform>();
                 Image markImage = markObj.GetComponent<Image>();
 
-                // Yüzdelik pozisyon hesapla
                 float normalizedPosition = (float)_thresholds[i] / _targetScore * 100f;
 
                 markRect.anchorMin = new Vector2(normalizedPosition / 100f, 0.5f);
@@ -103,25 +170,27 @@ namespace _Main._UI
                 markImage.color = _normalMarkColor;
             }
         }
+
+        /// <summary>
+        /// Updates the score display and progress.
+        /// </summary>
         public void UpdateScore(int currentScore)
         {
-            // Skoru güncelle
             if (_scoreText != null)
                 _scoreText.text = $"{currentScore}/{_targetScore}";
 
-            // Slider de?erini güncelle (do?rudan currentScore kullan)
             if (_scoreSlider != null)
             {
                 _scoreSlider.value = currentScore;
-
-                // Slider animasyonunu ba?lat
                 _scoreSlider.DOValue(currentScore, 0.3f).SetEase(Ease.OutQuad);
             }
 
-            // E?ik i?aretlerini güncelle
             UpdateThresholdMarks(currentScore);
         }
 
+        /// <summary>
+        /// Updates the color of the threshold marks based on the current score.
+        /// </summary>
         private void UpdateThresholdMarks(int currentScore)
         {
             for (int i = 0; i < _thresholds.Length; i++)
@@ -130,7 +199,6 @@ namespace _Main._UI
                 {
                     if (currentScore >= _thresholds[i])
                     {
-                        // ??aret geçildi?inde rengi de?i?tir ve efekt ekle
                         if (_thresholdMarks[i].color != _reachedMarkColor)
                         {
                             _thresholdMarks[i].DOColor(_reachedMarkColor, 0.3f);
@@ -140,18 +208,20 @@ namespace _Main._UI
                 }
             }
         }
+
+        /// <summary>
+        /// Displays the gameplay UI.
+        /// </summary>
         public void Show()
         {
             gameObject.SetActive(true);
         }
 
-        public void Hide()
-        {
-            gameObject.SetActive(false);
-        }
+        /// <summary>
+        /// Plays an animation when a threshold is reached.
+        /// </summary>
         private void PlayThresholdReachedEffect(Transform markTransform)
         {
-            // Scale animasyonu
             markTransform.DOScale(Vector3.one * 1.5f, 0.2f)
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() =>
@@ -161,6 +231,9 @@ namespace _Main._UI
                 });
         }
 
+        /// <summary>
+        /// Updates the timer display with the remaining time.
+        /// </summary>
         public void UpdateTimer(float remainingTime)
         {
             int minutes = Mathf.FloorToInt(remainingTime / 60);
