@@ -1,113 +1,187 @@
 using SerapKeremGameTools._Game._Singleton;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace SerapKeremGameTools._Game._InputSystem
 {
-    /// <summary>
-    /// Handles player input, including mouse position tracking and mouse events.
-    /// </summary>
     public class PlayerInput : MonoSingleton<PlayerInput>
     {
-        /// <summary>
-        /// Current mouse position in world coordinates.
-        /// </summary>
-        [Tooltip("Current mouse position in world coordinates.")]
-        public Vector3 MousePosition { get; private set; }
+        [Header("Input Settings")]
+        [SerializeField] private Joystick _joystick;
+        [SerializeField] private bool _useKeyboardInput = true;
+        [SerializeField] private float _keyboardInputSmoothing = 0.1f;
 
-        /// <summary>
-        /// Event invoked when the left mouse button is pressed down.
-        /// </summary>
-        [Tooltip("Event triggered when the left mouse button is pressed down.")]
-        public UnityEvent OnMouseDownEvent = new UnityEvent();
-
-        /// <summary>
-        /// Event invoked while the left mouse button is held down.
-        /// </summary>
-        [Tooltip("Event triggered while the left mouse button is held down.")]
-        public UnityEvent OnMouseHeldEvent = new UnityEvent();
-
-        /// <summary>
-        /// Event invoked when the left mouse button is released.
-        /// </summary>
-        [Tooltip("Event triggered when the left mouse button is released.")]
-        public UnityEvent OnMouseUpEvent = new UnityEvent();
-
-        /// <summary>
-        /// Event invoked when mouse position changes.
-        /// </summary>
-        [Tooltip("Event triggered when mouse position changes.")]
-        public UnityEvent<Vector3> OnMousePositionInput = new UnityEvent<Vector3>();
-
-        /// <summary>
-        /// Movement input (Vector2) based on horizontal and vertical axes.
-        /// </summary>
-        [Tooltip("Current movement input (WASD or arrow keys).")]
         public Vector2 MovementInput { get; private set; }
+        public Vector3 MousePosition { get; private set; }
+        public bool IsInputActive { get; private set; }
 
-        [Tooltip("Reference to the main camera in the scene.")]
-        private Camera mainCamera;
+        // Movement Events
+        public UnityEvent OnInputStarted = new UnityEvent();
+        public UnityEvent OnInputEnded = new UnityEvent();
+        public UnityEvent<Vector3> OnInputChanged = new UnityEvent<Vector3>();
 
-        /// <summary>
-        /// Initializes the PlayerInput singleton and assigns the main camera.
-        /// </summary>
+        // Mouse Events
+        public UnityEvent OnMouseDownEvent = new UnityEvent();
+        public UnityEvent OnMouseHeldEvent = new UnityEvent();
+        public UnityEvent OnMouseUpEvent = new UnityEvent();
+        public UnityEvent<Vector3> OnMousePositionChanged = new UnityEvent<Vector3>();
+
+        private Vector2 _keyboardInput;
+        private Vector2 _currentKeyboardVelocity;
+        private Camera _mainCamera;
+        private bool _isInitialized;
+
         protected override void Awake()
         {
+         
             base.Awake();
-            mainCamera = Camera.main;
-            if (mainCamera == null)
+            Initialize();
+        }
+       
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+        private void Initialize()
+        {
+            _mainCamera = Camera.main;
+            FindJoystick();
+            _isInitialized = true;
+            EnableInput();
+        }
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            StartCoroutine(InitializeAfterSceneLoad());
+        }
+        private IEnumerator InitializeAfterSceneLoad()
+        {
+            yield return new WaitForEndOfFrame();
+            Initialize();
+        }
+        private void FindJoystick()
+        {
+            if (_joystick == null)
             {
-#if UNITY_EDITOR
-                Debug.LogError("No Main Camera found in the scene!");
-#endif
+                _joystick = FindObjectOfType<DynamicJoystick>();
+               
             }
         }
-        /// <summary>
-        /// Updates input states, including mouse position and movement input.
-        /// </summary>
         private void Update()
         {
-            // Update mouse position
-            if (mainCamera != null)
-            {
-                Vector3 previousMousePosition = MousePosition; // Store previous position
-                MousePosition = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+            if (!_isInitialized) return;
+            UpdateMouseInput();
+            UpdateMovementInput();
+        }
 
-                // Trigger event if mouse position has changed
-                if (MousePosition != previousMousePosition)
+        private void UpdateMouseInput()
+        {
+            if (_mainCamera == null) return;
+
+            // Update mouse position
+            Vector3 previousMousePosition = MousePosition;
+            MousePosition = Input.mousePosition;
+
+            // Trigger position changed event if needed
+            if (MousePosition != previousMousePosition)
+            {
+                OnMousePositionChanged?.Invoke(MousePosition);
+            }
+
+            // Handle mouse button events
+            if (Input.GetMouseButtonDown(0))
+            {
+                OnMouseDownEvent?.Invoke();
+            }
+            if (Input.GetMouseButton(0))
+            {
+                OnMouseHeldEvent?.Invoke();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                OnMouseUpEvent?.Invoke();
+            }
+        }
+
+        private void UpdateMovementInput()
+        {
+            Vector2 finalInput = Vector2.zero;
+            bool isCurrentlyActive = false;
+
+            // Joystick input
+            if (_joystick != null && (_joystick.Direction != Vector2.zero))
+            {
+                finalInput = _joystick.Direction;
+                isCurrentlyActive = true;
+            }
+
+            // Keyboard input
+            if (_useKeyboardInput)
+            {
+                Vector2 targetKeyboardInput = new Vector2(
+                    Input.GetAxisRaw("Horizontal"),
+                    Input.GetAxisRaw("Vertical")
+                );
+                if (targetKeyboardInput.magnitude > 0.1f)
                 {
-                    OnMousePositionInput.Invoke(MousePosition);
+                    _keyboardInput = Vector2.SmoothDamp(
+                        _keyboardInput,
+                        targetKeyboardInput,
+                        ref _currentKeyboardVelocity,
+                        _keyboardInputSmoothing
+                    );
+
+                    finalInput = _keyboardInput.normalized;
+                    isCurrentlyActive = true;
+                }
+                else if (_keyboardInput.magnitude > 0)
+                {
+                    _keyboardInput = Vector2.SmoothDamp(
+                        _keyboardInput,
+                        Vector2.zero,
+                        ref _currentKeyboardVelocity,
+                        _keyboardInputSmoothing
+                    );
+
+                    if (_keyboardInput.magnitude > 0.1f)
+                    {
+                        finalInput = _keyboardInput.normalized;
+                        isCurrentlyActive = true;
+                    }
                 }
             }
 
-            // Update movement input
-            MovementInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            MovementInput = finalInput;
+            IsInputActive = isCurrentlyActive;
 
-            // Mouse input events
-            if (Input.GetMouseButtonDown(0)) // Left mouse button pressed
+            if (MovementInput != Vector2.zero)
             {
-                OnMouseDownEvent.Invoke();
-            }
-
-            if (Input.GetMouseButton(0)) // Left mouse button held
-            {
-                OnMouseHeldEvent.Invoke();
-            }
-
-            if (Input.GetMouseButtonUp(0)) // Left mouse button released
-            {
-                OnMouseUpEvent.Invoke();
+                OnInputChanged?.Invoke(new Vector3(MovementInput.x, 0f, MovementInput.y));
             }
         }
+       
 
-        /// <summary>
-        /// Returns the movement input for the player (WASD or arrow keys).
-        /// </summary>
-        public Vector2 GetMovementInput()
+        public void EnableInput()
         {
-            float moveX = Input.GetAxisRaw("Horizontal");  
-            float moveY = Input.GetAxisRaw("Vertical");   
-            return new Vector2(moveX, moveY);
+            _useKeyboardInput = true;
+            
+            _isInitialized = true;
+        }
+
+        public void DisableInput()
+        {
+            _useKeyboardInput = false;
+           
+            MovementInput = Vector2.zero;
+            _keyboardInput = Vector2.zero;
+            _currentKeyboardVelocity = Vector2.zero;
+            _isInitialized = false;
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using TriInspector;
+using SerapKeremGameTools._Game._Singleton;
 
 namespace _Main._UI
 {
@@ -10,46 +11,56 @@ namespace _Main._UI
     /// Manages the gameplay UI elements like score, level, timer, and score progress.
     /// Provides functionalities to update score, timer, and display threshold marks.
     /// </summary>
-    public class GameplayUI : MonoBehaviour
+    [DeclareFoldoutGroup("Text Elements", Title = "Text Elements")]
+    [DeclareFoldoutGroup("Buttons", Title = "Buttons")]
+    [DeclareFoldoutGroup("Score Progress", Title = "Score Progress")]
+    [DeclareFoldoutGroup("Visual Settings", Title = "Visual Settings")]
+    public class GameplayUI : MonoSingleton<GameplayUI>
     {
-        [Header("Text Elements")]
-        [Tooltip("Text displaying the current level number.")]
+        [Group("Text Elements")]
+        [PropertyTooltip("Text displaying the current level number.")]
         [SerializeField, Required] private TextMeshProUGUI _levelText;
-        
-        [Tooltip("Text displaying the remaining time.")]
+
+        [Group("Text Elements")]
+        [PropertyTooltip("Text displaying the remaining time.")]
         [SerializeField, Required] private TextMeshProUGUI _timerText;
-        
-        [Tooltip("Text displaying the current score and target score.")]
+
+        [Group("Text Elements")]
+        [PropertyTooltip("Text displaying the current score and target score.")]
         [SerializeField, Required] private TextMeshProUGUI _scoreText;
 
-        [Header("Buttons")]
-        [Tooltip("Button to open the settings panel.")]
+        [Group("Buttons")]
+        [PropertyTooltip("Button to open the settings panel.")]
         [SerializeField, Required] private Button _settingsButton;
 
-        [Header("Score Progress")]
-        [Tooltip("Slider showing the current score progress.")]
+        [Group("Score Progress")]
+        [PropertyTooltip("Slider showing the current score progress.")]
         [SerializeField, Required] private Slider _scoreSlider;
 
-        [Tooltip("Container for score threshold marks.")]
+        [Group("Score Progress")]
+        [PropertyTooltip("Container for score threshold marks.")]
         [SerializeField, Required] private RectTransform _sliderMarksContainer;
 
-        [Tooltip("Prefab for threshold marks.")]
+        [Group("Score Progress")]
+        [PropertyTooltip("Prefab for threshold marks.")]
         [SerializeField, Required] private GameObject _thresholdMarkPrefab;
 
-        [Header("Visual Settings")]
-        [Tooltip("Color of the threshold marks when not reached.")]
+        [Group("Visual Settings")]
+        [PropertyTooltip("Color of the threshold marks when not reached.")]
         [SerializeField] private Color _normalMarkColor = Color.white;
-        
-        [Tooltip("Color of the threshold marks when reached.")]
+
+        [Group("Visual Settings")]
+        [PropertyTooltip("Color of the threshold marks when reached.")]
         [SerializeField] private Color _reachedMarkColor = Color.green;
 
-        [Tooltip("Width of the threshold marks.")]
+        [Group("Visual Settings")]
+        [PropertyTooltip("Width of the threshold marks.")]
         [SerializeField] private float _markWidth = 4f;
 
-        [Tooltip("Height of the threshold marks.")]
+        [Group("Visual Settings")]
+        [PropertyTooltip("Height of the threshold marks.")]
         [SerializeField] private float _markHeight = 20f;
 
-        private UIManager _uiManager;
         private int _targetScore;
         private int[] _thresholds;
         private Image[] _thresholdMarks;
@@ -57,9 +68,11 @@ namespace _Main._UI
         /// <summary>
         /// Initializes references and button interactions.
         /// </summary>
-        private void Awake()
+
+        protected override void Awake()
         {
-            _uiManager = GetComponentInParent<UIManager>();
+            base.Awake();
+            
             SetupSettingsButton();
             ValidateReferences();
         }
@@ -84,7 +97,7 @@ namespace _Main._UI
             if (_settingsButton != null)
             {
                 _settingsButton.onClick.RemoveAllListeners();
-                _settingsButton.onClick.AddListener(() => _uiManager.ShowSettings());
+                _settingsButton.onClick.AddListener(() => UIManager.Instance.ShowSettings());
             }
         }
 
@@ -137,7 +150,7 @@ namespace _Main._UI
             _scoreSlider.value = 0;
 
             Image fillImage = _scoreSlider.fillRect.GetComponent<Image>();
-            fillImage.color = new Color(0.2f, 0.8f, 0.2f); 
+            fillImage.color = new Color(0.2f, 0.8f, 0.2f);
         }
 
         /// <summary>

@@ -3,31 +3,30 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using _Main._Hole;
 using _Main._Managers;
+using TriInspector;
+using SerapKeremGameTools._Game._Singleton;
 
 namespace _Main._UI
 {
-    public class UIManager : MonoBehaviour
+    [DeclareFoldoutGroup("Panels", Title = "Panels")]
+    public class UIManager : MonoSingleton<UIManager>
     {
-        [Header("Panels")]
-        [SerializeField] private GameplayUI _gameplayUI;
-        [SerializeField] private SettingsPanel _settingsPanel;
-        [SerializeField] private WinPanel _winPanel;
-        [SerializeField] private FailPanel _failPanel;
+       
+        [SerializeField, Group("Panels")] private GameplayUI _gameplayUI;
+        [SerializeField, Group("Panels")] private SettingsPanel _settingsPanel;
+        [SerializeField, Group("Panels")] private WinPanel _winPanel;
+        [SerializeField, Group("Panels")] private FailPanel _failPanel;
 
-        [Header("References")]
-        [SerializeField] private HoleController _holeController;
+    
 
         #region Initialization
 
         /// <summary>
         /// Initializes the UI Manager, checks required references.
         /// </summary>
-        private void Awake()
+        protected override void Awake()
         {
-            if (_holeController == null)
-            {
-                _holeController = FindObjectOfType<HoleController>();
-            }
+            base.Awake();
             ValidateReferences();
             SetupPanels();
         }
@@ -78,7 +77,7 @@ namespace _Main._UI
             if (_settingsPanel != null)
             {
                 _settingsPanel.Hide();
-                if (_holeController != null) _holeController.EnableControl();
+                HoleController.Instance.EnableControl();
             }
         }
 
@@ -95,7 +94,7 @@ namespace _Main._UI
             {
                 _winPanel.gameObject.SetActive(true);
                 _winPanel.Show();
-                if (_holeController != null) _holeController.DisableControl();
+                 HoleController.Instance.DisableControl();
             }
         }
 
@@ -108,7 +107,7 @@ namespace _Main._UI
             {
                 _failPanel.gameObject.SetActive(true);
                 _failPanel.Show();
-                if (_holeController != null) _holeController.DisableControl();
+                HoleController.Instance.DisableControl();
             }
         }
 
@@ -120,7 +119,7 @@ namespace _Main._UI
             if (_settingsPanel != null)
             {
                 _settingsPanel.Show();
-                if (_holeController != null) _holeController.DisableControl();
+                HoleController.Instance.DisableControl();
             }
         }
 

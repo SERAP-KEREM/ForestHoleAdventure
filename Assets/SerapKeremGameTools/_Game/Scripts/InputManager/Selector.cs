@@ -4,38 +4,23 @@ using UnityEngine;
 
 namespace SerapKeremGameTools._Game._InputSystem
 {
-    /// <summary>
-    /// Manages object selection and deselection based on player input.
-    /// </summary>
     public class Selector : MonoSingleton<Selector>
     {
-        /// <summary>
-        /// The maximum distance for raycasting to detect selectable objects.
-        /// </summary>
-        [Tooltip("The maximum distance for raycasting to detect selectable objects.")]
-        public float raycastLength = 10f;
-
-        [Tooltip("The currently selected object implementing ISelectable.")]
+        [SerializeField] private float raycastLength = 10f;
         private ISelectable selectedObject;
+        private Camera _mainCamera;
 
-        /// <summary>
-        /// Ensures base initialization.
-        /// </summary>
-        protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
+            _mainCamera = Camera.main;
         }
 
-        /// <summary>
-        /// Subscribes to player input events.
-        /// </summary>
         private void OnEnable()
         {
             if (PlayerInput.Instance == null)
             {
-#if UNITY_EDITOR
                 Debug.LogError("PlayerInput reference is missing!");
-#endif
                 return;
             }
 
@@ -43,9 +28,6 @@ namespace SerapKeremGameTools._Game._InputSystem
             PlayerInput.Instance.OnMouseUpEvent.AddListener(DeselectObject);
         }
 
-        /// <summary>
-        /// Unsubscribes from player input events.
-        /// </summary>
         private void OnDisable()
         {
             if (PlayerInput.Instance != null)
@@ -55,12 +37,11 @@ namespace SerapKeremGameTools._Game._InputSystem
             }
         }
 
-        /// <summary>
-        /// Attempts to select an object under the mouse pointer.
-        /// </summary>
         private void SelectObject()
         {
-            Ray ray = Camera.main.ScreenPointToRay(PlayerInput.Instance.MousePosition);
+            if (_mainCamera == null) return;
+
+            Ray ray = _mainCamera.ScreenPointToRay(PlayerInput.Instance.MousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, raycastLength))
             {
                 selectedObject = hit.collider.GetComponent<ISelectable>();
@@ -68,9 +49,6 @@ namespace SerapKeremGameTools._Game._InputSystem
             }
         }
 
-        /// <summary>
-        /// Deselects the currently selected object and triggers collection if applicable.
-        /// </summary>
         private void DeselectObject()
         {
             if (selectedObject != null)

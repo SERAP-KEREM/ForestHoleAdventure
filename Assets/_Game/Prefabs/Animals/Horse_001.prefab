@@ -950,7 +950,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1175340588051307739}
@@ -1216,8 +1216,8 @@ GameObject:
   - component: {fileID: 5743528550587909893}
   - component: {fileID: 654142404638564354}
   - component: {fileID: 8841802191909566211}
-  - component: {fileID: 8167105837501320484}
   - component: {fileID: 7678402123907445870}
+  - component: {fileID: -6074131632339173018}
   m_Layer: 0
   m_Name: Horse_001
   m_TagString: Animal
@@ -1234,7 +1234,7 @@ Transform:
   m_GameObject: {fileID: 5186341067905074382}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.31, y: 0, z: 0}
+  m_LocalPosition: {x: -12.31, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1253,15 +1253,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4230d7c57ed39bf4a9b1c212fe98f8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  runSpeed: 5
-  rotationSpeed: 120
-  moveRadius: 30
-  holeDetectionRadius: 5
-  obstacleCheckDistance: 2
-  idleDurationMin: 2
-  idleDurationMax: 5
-  size: 1
+  _walkSpeed: 2
+  _runSpeed: 5
+  _moveRadius: 10
+  _minDistanceToObstacles: 2
+  _idleTimeMin: 2
+  _idleTimeMax: 5
+  _holeDetectionRadius: 10
+  _runAwayDistance: 15
 --- !u!114 &654142404638564354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1297,30 +1296,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.0234652, y: 7.427473, z: 10.736431}
-  m_Center: {x: 0.03570795, y: 3.2137365, z: 0.7974827}
---- !u!195 &8167105837501320484
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5186341067905074382}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 1.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 0
-  m_AutoRepath: 1
-  m_Height: 7
-  m_BaseOffset: 0.2
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_Size: {x: 2.6289186, y: 5.849285, z: 8.98563}
+  m_Center: {x: 0.085026264, y: 2.7945309, z: 0.61253834}
 --- !u!54 &7678402123907445870
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1344,10 +1321,32 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!195 &-6074131632339173018
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5186341067905074382}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 1
+  m_AutoRepath: 0
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &5217244018906936382
 GameObject:
   m_ObjectHideFlags: 0

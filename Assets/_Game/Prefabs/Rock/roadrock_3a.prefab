@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 8155032351118303691}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.26, y: -1.38, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -99,9 +99,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _collectDuration: 0.5
-  _spiralRadius: 0.5
-  _spiralRotations: 1.5
-  _fallHeight: 0.5
+  _fallDepth: 0.5
+  _fadeDuration: 1.5
   _type: 0
 --- !u!65 &2564612271924328763
 BoxCollider:
@@ -122,8 +121,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8361859, y: 0.20872466, z: 1.715312}
-  m_Center: {x: -0.08906332, y: 0.0710211, z: 0.059295923}
+  m_Size: {x: 1.8361859, y: 0.33699942, z: 1.715312}
+  m_Center: {x: -0.08906329, y: 0.07102132, z: 0.059295893}
 --- !u!54 &8273983865112131666
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -149,5 +148,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0

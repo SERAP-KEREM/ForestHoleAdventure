@@ -192,7 +192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    passTag: RenderObjectsFeature
+    passTag: RenderObjects
     Event: 300
     filterSettings:
       RenderQueueType: 0

@@ -77,7 +77,7 @@ namespace SerapKeremGameTools._Game._AudioSystem
                     Clip = clip,
                     Volume = 1f,
                     Pitch = 1f,
-                    Loop = false
+                    Loop = true
                 };
                 audioClips.Add(newAudio);
             }
@@ -95,10 +95,10 @@ namespace SerapKeremGameTools._Game._AudioSystem
             if (audio != null)
             {
                 // Check if the audio is already playing
-                if (currentAudio == audioName)
+                if (currentAudio == audioName && loop)
                 {
 #if UNITY_EDITOR
-                    Debug.Log($"Audio {audioName} is already playing.");
+                    Debug.Log($"Audio {audioName} is already playing in loop.");
 #endif
                     return;
                 }

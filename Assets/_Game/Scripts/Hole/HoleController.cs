@@ -1,96 +1,96 @@
 using UnityEngine;
+using SerapKeremGameTools._Game._InputSystem;
+using TriInspector;
 using _Main._Level;
-using _Main._InputSystem;
+using SerapKeremGameTools._Game._Singleton;
 
 namespace _Main._Hole
 {
-    /// <summary>
-    /// Controller responsible for handling the hole's movement and input.
-    /// </summary>
-    public class HoleController : MonoBehaviour
+    [DeclareFoldoutGroup("Movement Settings", Title = "Movement Settings")]
+    public class HoleController : MonoSingleton<HoleController>
     {
-        #region Serialized Fields
-
-        [Header("Level Settings")]
-        [SerializeField, Tooltip("Reference to the Level Manager.")]
-        private LevelManager _levelManager;
-
-        [Header("Movement Settings")]
-        [SerializeField, Tooltip("Movement speed of the hole.")]
-        private float _moveSpeed = 5f;
-
-        [Header("Input Settings")]
-        [SerializeField, Tooltip("Floating joystick for mobile input.")]
-        private FloatingJoystick _floatingJoystick;
-
-        [SerializeField, Tooltip("Keyboard input handler for desktop control.")]
-        private KeyboardInput _keyboardInput;
-
-        #endregion
+        [Group("Movement Settings")]
+        [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _movementSmoothing = 0.1f;
 
         private bool _isControlEnabled = true;
+        private Vector3 _currentVelocity;
+        private Vector3 _targetPosition;
 
+        protected override void Awake()
+        {
+            base.Awake();
+        }
         private void Start()
         {
-            // Find input system objects in the scene if not already assigned
-            if (_floatingJoystick == null)
-            {
-                _floatingJoystick = FindObjectOfType<FloatingJoystick>();
-            }
+            _targetPosition = transform.position;
 
-            if (_keyboardInput == null)
+            if (PlayerInput.Instance != null)
             {
-                _keyboardInput = FindObjectOfType<KeyboardInput>();
+                PlayerInput.Instance.OnInputStarted.AddListener(OnInputStarted);
+                PlayerInput.Instance.OnInputEnded.AddListener(OnInputEnded);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (PlayerInput.Instance != null)
+            {
+                PlayerInput.Instance.OnInputStarted.RemoveListener(OnInputStarted);
+                PlayerInput.Instance.OnInputEnded.RemoveListener(OnInputEnded);
             }
         }
 
         private void Update()
         {
-            // Handle movement when control is enabled
+            if (!_isControlEnabled || PlayerInput.Instance == null) return;
+
+            Vector2 input = PlayerInput.Instance.MovementInput;
+            if (input != Vector2.zero)
+            {
+                Vector3 movement = new Vector3(input.x, 0f, input.y);
+                _targetPosition += movement * _moveSpeed * Time.deltaTime;
+            }
+
+            // Smooth movement
+            transform.position = Vector3.SmoothDamp(
+                transform.position,
+                _targetPosition,
+                ref _currentVelocity,
+                _movementSmoothing
+            );
+        }
+
+        private void OnInputStarted()
+        {
             if (_isControlEnabled)
             {
-                HandleMovement();
+                _targetPosition = transform.position;
             }
         }
 
-        /// <summary>
-        /// Handles the movement input and updates the hole's position.
-        /// </summary>
-        private void HandleMovement()
+        private void OnInputEnded()
         {
-            // Get input from both the joystick and keyboard
-            float horizontal = _floatingJoystick.Horizontal + _keyboardInput.Horizontal;
-            float vertical = _floatingJoystick.Vertical + _keyboardInput.Vertical;
-
-            // Calculate the movement direction and normalize it
-            Vector3 movement = new Vector3(horizontal, 0f, vertical).normalized;
-
-            // Move the hole based on the calculated direction and speed
-            transform.Translate(movement * _moveSpeed * Time.deltaTime, Space.World);
+            _currentVelocity = Vector3.zero;
         }
 
-        /// <summary>
-        /// Enables the control for the hole (e.g., for player input).
-        /// </summary>
         public void EnableControl()
         {
             _isControlEnabled = true;
-            if (_floatingJoystick != null)
+            if (PlayerInput.Instance != null)
             {
-                _floatingJoystick.Enable();
+                PlayerInput.Instance.EnableInput();
             }
         }
 
-        /// <summary>
-        /// Disables the control for the hole (e.g., to stop player input).
-        /// </summary>
         public void DisableControl()
         {
             _isControlEnabled = false;
-            if (_floatingJoystick != null)
+            if (PlayerInput.Instance != null)
             {
-                _floatingJoystick.Disable();
+                PlayerInput.Instance.DisableInput();
             }
+            _currentVelocity = Vector3.zero;
         }
     }
 }

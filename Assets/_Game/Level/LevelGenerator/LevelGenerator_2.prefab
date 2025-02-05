@@ -48,10 +48,10 @@ MonoBehaviour:
   - classification: Decorations
     zone:
       name: Decorations
-      minX: -50
+      minX: -47
       maxX: 50
-      minZ: -50
-      maxZ: 50
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 739508447745405468, guid: 58bb0932035e6244da43aa6555237548, type: 3}
@@ -114,10 +114,10 @@ MonoBehaviour:
   - classification: Plants
     zone:
       name: Plants
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 1039836684414553810, guid: 211436d5239ea5c418e1d74607b69825, type: 3}
@@ -162,10 +162,10 @@ MonoBehaviour:
   - classification: Rocks
     zone:
       name: Rocks
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 7207745456751111778, guid: 5085df3350ea1624bb3a41e62853602d, type: 3}
@@ -204,10 +204,10 @@ MonoBehaviour:
   - classification: Trees
     zone:
       name: Trees
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 3743887058419754457, guid: 98cdb4c398df77a4caea43077c2532e2, type: 3}
@@ -243,10 +243,10 @@ MonoBehaviour:
   - classification: Woods
     zone:
       name: Woods
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 786580619863807619, guid: e68d28f2829e35d4f8611fad6bf9e331, type: 3}
@@ -315,10 +315,10 @@ MonoBehaviour:
   - classification: Animals
     zone:
       name: Animals
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 1009200002385053497, guid: 315409247b7cb9c4fbe65ab685eb51d7, type: 3}

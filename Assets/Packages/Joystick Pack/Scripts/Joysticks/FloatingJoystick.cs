@@ -1,23 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class FloatingJoystick : Joystick
 {
     private CanvasGroup _canvasGroup;
+    private Canvas _canvas;
+    private Camera _uiCamera;
+
     private void Awake()
+    {
+        SetupComponents();
+    }
+
+    public void Initialize()
+    {
+        SetupComponents();
+        background.gameObject.SetActive(false);
+    }
+
+    private void SetupComponents()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         if (_canvasGroup == null)
         {
             _canvasGroup = gameObject.AddComponent<CanvasGroup>();
         }
-    }
-    protected override void Start()
-    {
-        base.Start();
-        background.gameObject.SetActive(false);
+
+        _canvas = GetComponentInParent<Canvas>();
+        if (_canvas != null)
+        {
+            _uiCamera = _canvas.worldCamera;
+        }
+
+        // Canvas'ın raycast hedeflerini görmezden gelmesini sağla
+        if (_canvas != null)
+        {
+            var raycaster = _canvas.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+            {
+                raycaster.ignoreReversedGraphics = false;
+            }
+        }
     }
 
     public override void OnPointerDown(PointerEventData eventData)
@@ -45,5 +69,6 @@ public class FloatingJoystick : Joystick
         _canvasGroup.alpha = 0f;
         _canvasGroup.blocksRaycasts = false;
         _canvasGroup.interactable = false;
+        background.gameObject.SetActive(false);
     }
 }

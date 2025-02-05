@@ -1,5 +1,6 @@
 using _Main._Level;
 using _Main._Objects;
+using SerapKeremGameTools._Game._Singleton;
 using UnityEngine;
 
 namespace _Main._Hole
@@ -7,7 +8,7 @@ namespace _Main._Hole
     /// <summary>
     /// Manages the hole's interactions with collectible objects in the game.
     /// </summary>
-    public class HoleManager : MonoBehaviour
+    public class HoleManager : MonoSingleton<HoleManager>
     {
         #region Serialized Fields
 
@@ -15,12 +16,14 @@ namespace _Main._Hole
         [SerializeField, Tooltip("Transform of the hole object.")]
         private Transform _holeTransform;
 
-        [Header("Level Settings")]
-        [SerializeField, Tooltip("Reference to the Level Manager.")]
-        private LevelManager _levelManager;
+
 
         #endregion
 
+        protected override void Awake()
+        {
+            base.Awake();
+        }
         /// <summary>
         /// Called when the hole collides with a collectible item.
         /// </summary>
@@ -38,7 +41,7 @@ namespace _Main._Hole
                 // Check if the hole is large enough to collect the object
                 if (holeSize >= objectSize * 0.9f)
                 {
-                    _levelManager.AddScore(collectible.Score);
+                    LevelManager.Instance.AddScore(collectible.Score);
                     collectible.Collect(_holeTransform);
 
                     Debug.Log($"Collected: {other.gameObject.name}, " +

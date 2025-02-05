@@ -562,7 +562,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5937896256796491245}
@@ -1081,7 +1081,7 @@ GameObject:
   - component: {fileID: 8505035055841472921}
   - component: {fileID: 3868948037531144310}
   - component: {fileID: 2166736848759542221}
-  - component: {fileID: 2277927345830334463}
+  - component: {fileID: -3172592482930861732}
   m_Layer: 0
   m_Name: Kitty_001
   m_TagString: Animal
@@ -1098,7 +1098,7 @@ Transform:
   m_GameObject: {fileID: 6227786767267920901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.793, y: 0, z: 0}
+  m_LocalPosition: {x: 10.793, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1117,15 +1117,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4230d7c57ed39bf4a9b1c212fe98f8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  runSpeed: 5
-  rotationSpeed: 120
-  moveRadius: 30
-  holeDetectionRadius: 5
-  obstacleCheckDistance: 2
-  idleDurationMin: 2
-  idleDurationMax: 5
-  size: 1
+  _walkSpeed: 2
+  _runSpeed: 5
+  _moveRadius: 10
+  _minDistanceToObstacles: 2
+  _idleTimeMin: 2
+  _idleTimeMax: 5
+  _holeDetectionRadius: 10
+  _runAwayDistance: 15
 --- !u!65 &8505035055841472921
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1145,8 +1144,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.764562, y: 1.5803823, z: 2.8178}
-  m_Center: {x: -0.0027375966, y: 0.7391658, z: -0.25186396}
+  m_Size: {x: 0.6908932, y: 1.3027089, z: 1.9394453}
+  m_Center: {x: 0.00009536743, y: 0.60032904, z: -0.033691764}
 --- !u!114 &3868948037531144310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1186,30 +1185,30 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
---- !u!195 &2277927345830334463
+--- !u!195 &-3172592482930861732
 NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6227786767267920901}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.4
+  m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 0
-  m_AutoRepath: 1
-  m_Height: 1.7
-  m_BaseOffset: 0.2
+  m_AutoTraverseOffMeshLink: 0
+  m_AutoBraking: 1
+  m_AutoRepath: 0
+  m_Height: 2
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &6459825112626022741

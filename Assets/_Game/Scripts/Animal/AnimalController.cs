@@ -1,237 +1,160 @@
-﻿using DG.Tweening;
-using UnityEngine;
-using TriInspector;
+﻿using UnityEngine;
+using UnityEngine.AI;
+using DG.Tweening;
 
 namespace _Main._Animals
 {
-    /// <summary>
-    /// Controls the behavior and movement of animals, including idle, walking, running, and obstacle avoidance.
-    /// </summary>
     public class AnimalController : MonoBehaviour
     {
-        #region Movement Settings
         [Header("Movement Settings")]
-        [SerializeField, Tooltip("Normal walking speed of the animal.")]
-        private float _moveSpeed = 2f;
+        [SerializeField] private float _walkSpeed = 2f;
+        [SerializeField] private float _runSpeed = 5f;
+        [SerializeField] private float _moveRadius = 10f;
+        [SerializeField] private float _minDistanceToObstacles = 2f;
 
-        [SerializeField, Tooltip("Running speed of the animal.")]
-        private float _runSpeed = 5f;
+        [Header("Timing Settings")]
+        [SerializeField] private float _idleTimeMin = 2f;
+        [SerializeField] private float _idleTimeMax = 5f;
 
-        [SerializeField, Tooltip("Rotation speed of the animal.")]
-        private float _rotationSpeed = 120f;
+        [Header("Hole Detection")]
+        [SerializeField] private float _holeDetectionRadius = 10f;
+        [SerializeField] private float _runAwayDistance = 15f;
 
-        [SerializeField, Tooltip("Maximum movement radius around the starting position.")]
-        private float _moveRadius = 30f;
-
-        [SerializeField, Tooltip("Radius for detecting the hole proximity.")]
-        private float _holeDetectionRadius = 10f;
-
-        [SerializeField, Tooltip("Distance for obstacle detection.")]
-        private float _obstacleCheckDistance = 2f;
-        #endregion
-
-        #region Idle Settings
-        [Header("Idle Settings")]
-        [SerializeField, Tooltip("Minimum idle duration.")]
-        private float _idleDurationMin = 2f;
-
-        [SerializeField, Tooltip("Maximum idle duration.")]
-        private float _idleDurationMax = 5f;
-        #endregion
-
-        #region Collection Settings
-        [Header("Collection Settings")]
-        [SerializeField, Tooltip("Duration for the animal to be collected.")]
-        private float _collectDuration = 1f;
-        #endregion
-
-        #region Private Variables
+        private NavMeshAgent _agent;
         private Animator _animator;
         private Transform _holeTransform;
-        private Vector3 _targetPosition;
-        private bool _isIdle;
-        private float _idleTimer;
-        private float _currentSpeed;
         private Vector3 _startPosition;
-        private bool _isCollected;
-        #endregion
+        private bool _isIdle = true;
+        private float _idleTimer;
 
-        #region Animation Hashes
-        private static readonly int IsIdleHash = Animator.StringToHash("isIdle");
-        private static readonly int IsWalkingHash = Animator.StringToHash("isWalking");
-        private static readonly int IsRunningHash = Animator.StringToHash("isRunning");
-        private static readonly int SpeedHash = Animator.StringToHash("Speed");
-        #endregion
+        private static readonly int IsIdle = Animator.StringToHash("isIdle");
+        private static readonly int IsWalking = Animator.StringToHash("isWalking");
+        private static readonly int IsRunning = Animator.StringToHash("isRunning");
 
-        #region Unity Lifecycle Methods
         private void Start()
         {
             InitializeComponents();
             _startPosition = transform.position;
-            SetNewTarget();
-            _currentSpeed = _moveSpeed;
+            StartIdleState();
+        }
+
+        private void InitializeComponents()
+        {
+            _agent = GetComponent<NavMeshAgent>();
+            _animator = GetComponentInChildren<Animator>();
+            _holeTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+            if (_agent != null)
+            {
+                _agent.speed = _walkSpeed;
+                _agent.stoppingDistance = 0.5f;
+                _agent.autoBraking = true;
+                _agent.acceleration = 8f;
+                _agent.angularSpeed = 120f;
+            }
         }
 
         private void Update()
         {
-            if (_isIdle || _isCollected)
-            {
-                HandleIdleState();
-                return;
-            }
+            if (_agent == null || _holeTransform == null) return;
 
             CheckHoleProximity();
-            MoveToTarget();
-        }
 
-        private void OnDrawGizmosSelected()
-        {
-            DrawDebugGizmos();
-        }
-        #endregion
-
-        #region Initialization
-        private void InitializeComponents()
-        {
-            _animator = GetComponentInChildren<Animator>();
-
-            GameObject holeObject = GameObject.FindGameObjectWithTag("Player");
-            if (holeObject != null)
+            if (_isIdle)
             {
-                _holeTransform = holeObject.transform;
+                UpdateIdleState();
             }
-            else
-            {
-                Debug.LogError("Hole not found. Ensure the hole object has the 'Player' tag.");
-            }
-        }
-        #endregion
-
-        #region Movement Logic
-        private void MoveToTarget()
-        {
-            if (Vector3.Distance(transform.position, _targetPosition) < 0.5f)
+            else if (_agent.remainingDistance <= _agent.stoppingDistance)
             {
                 StartIdleState();
-                return;
             }
 
-            if (CheckForObstacle())
-            {
-                SetNewTarget();
-                return;
-            }
-
-            RotateTowardsTarget();
-            transform.position += transform.forward * _currentSpeed * Time.deltaTime;
-
-            if (Vector3.Distance(_startPosition, transform.position) > _moveRadius)
-            {
-                SetNewTarget();
-            }
-
-            UpdateAnimationState();
-        }
-
-        private void RotateTowardsTarget()
-        {
-            Vector3 direction = (_targetPosition - transform.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                targetRotation,
-                _rotationSpeed * Time.deltaTime
-            );
-        }
-
-        private bool CheckForObstacle()
-        {
-            if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out RaycastHit hit, _obstacleCheckDistance))
-            {
-                if (!hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Animal"))
-                {
-                    Debug.Log($"Obstacle detected: {hit.collider.name}");
-                    return true;
-                }
-            }
-            return false;
+            UpdateAnimation();
         }
 
         private void CheckHoleProximity()
         {
-            if (_holeTransform == null) return;
-
             float distanceToHole = Vector3.Distance(transform.position, _holeTransform.position);
 
             if (distanceToHole <= _holeDetectionRadius)
             {
-                _currentSpeed = _runSpeed;
-                Vector3 awayFromHole = transform.position - _holeTransform.position;
-                _targetPosition = transform.position + awayFromHole.normalized * _moveRadius;
-                _targetPosition.y = transform.position.y;
+                _agent.speed = _runSpeed;
+                Vector3 directionFromHole = (transform.position - _holeTransform.position).normalized;
+                Vector3 runToPosition = transform.position + directionFromHole * _runAwayDistance;
+
+                if (NavMesh.SamplePosition(runToPosition, out NavMeshHit hit, _runAwayDistance, NavMesh.AllAreas))
+                {
+                    _agent.SetDestination(hit.position);
+                    _isIdle = false;
+                }
             }
             else
             {
-                _currentSpeed = _moveSpeed;
+                _agent.speed = _walkSpeed;
             }
         }
-        #endregion
 
-        #region Idle Logic
-        private void HandleIdleState()
+        private void UpdateIdleState()
         {
             _idleTimer -= Time.deltaTime;
+
             if (_idleTimer <= 0)
             {
-                _isIdle = false;
-                SetNewTarget();
-                UpdateAnimationState();
+                MoveToRandomPosition();
             }
         }
 
         private void StartIdleState()
         {
             _isIdle = true;
-            _idleTimer = Random.Range(_idleDurationMin, _idleDurationMax);
-            UpdateAnimationState();
+            _idleTimer = Random.Range(_idleTimeMin, _idleTimeMax);
+            _agent.ResetPath();
         }
-        #endregion
 
-        #region Utility Methods
-        private void SetNewTarget()
+        private void MoveToRandomPosition()
         {
-            Vector2 randomCircle = Random.insideUnitCircle * _moveRadius;
-            _targetPosition = _startPosition + new Vector3(randomCircle.x, 0, randomCircle.y);
+            for (int i = 0; i < 5; i++) // 5 kez deneme yap
+            {
+                Vector3 randomDirection = Random.insideUnitSphere * _moveRadius;
+                randomDirection.y = 0;
+                Vector3 targetPosition = _startPosition + randomDirection;
 
-            Vector3 direction = (_targetPosition - transform.position).normalized;
-            transform.DORotateQuaternion(Quaternion.LookRotation(direction), 0.5f);
+                if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, _moveRadius, NavMesh.AllAreas))
+                {
+                    // Hedef pozisyonun etrafında engel kontrolü
+                    if (!Physics.CheckSphere(hit.position, _minDistanceToObstacles))
+                    {
+                        _agent.SetDestination(hit.position);
+                        _isIdle = false;
+                        return;
+                    }
+                }
+            }
         }
 
-        private void UpdateAnimationState()
+        private void UpdateAnimation()
         {
             if (_animator == null) return;
 
-            _animator.SetBool(IsIdleHash, _isIdle);
-            _animator.SetBool(IsWalkingHash, !_isIdle && _currentSpeed == _moveSpeed);
-            _animator.SetBool(IsRunningHash, !_isIdle && _currentSpeed == _runSpeed);
-            _animator.SetFloat(SpeedHash, _currentSpeed);
+            float currentSpeed = _agent.velocity.magnitude;
+            bool isMoving = currentSpeed > 0.1f;
+            bool isRunning = currentSpeed > _walkSpeed + 0.1f;
+
+            _animator.SetBool(IsIdle, !isMoving);
+            _animator.SetBool(IsWalking, isMoving && !isRunning);
+            _animator.SetBool(IsRunning, isRunning);
         }
 
-        private void DrawDebugGizmos()
+        private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(Application.isPlaying ? _startPosition : transform.position, _moveRadius);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, _holeDetectionRadius);
 
-            if (Application.isPlaying)
+            if (Application.isPlaying && _startPosition != Vector3.zero)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(_targetPosition, 0.5f);
-
-                Gizmos.color = Color.red;
-                Gizmos.DrawRay(transform.position + Vector3.up, transform.forward * _obstacleCheckDistance);
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(_startPosition, _moveRadius);
             }
         }
-        #endregion
     }
 }

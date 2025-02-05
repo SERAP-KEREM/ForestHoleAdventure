@@ -11,8 +11,8 @@ namespace _Main._UI
     /// </summary>
     public class FailPanel : MonoBehaviour
     {
-        [Header("UI Elements")]
-        [Tooltip("Button to restart the game.")]
+        [Group("UI Elements")]
+        [PropertyTooltip("Button to restart the game.")]
         [SerializeField, Required] private Button _restartButton;
 
         /// <summary>

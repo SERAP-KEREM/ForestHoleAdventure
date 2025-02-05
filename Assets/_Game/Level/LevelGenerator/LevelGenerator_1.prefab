@@ -48,10 +48,10 @@ MonoBehaviour:
   - classification: Decorations
     zone:
       name: Decorations
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 739508447745405468, guid: 58bb0932035e6244da43aa6555237548, type: 3}
@@ -114,10 +114,10 @@ MonoBehaviour:
   - classification: Plants
     zone:
       name: Plants
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 1039836684414553810, guid: 211436d5239ea5c418e1d74607b69825, type: 3}
@@ -162,52 +162,52 @@ MonoBehaviour:
   - classification: Rocks
     zone:
       name: Rocks
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 7207745456751111778, guid: 5085df3350ea1624bb3a41e62853602d, type: 3}
-      count: 5
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 6056861598271883246, guid: fbc51a35a2879f74d90df837dd1de556, type: 3}
-      count: 5
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 8155032351118303691, guid: 280ea58d8b2193043b67121be98c40bd, type: 3}
-      count: 5
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 1282498036445410261, guid: 084f2dea025c13248ba2e9df76d219f9, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 4401325383752292111, guid: 20355c5a1699c644da157dca7d2988fc, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 8436375838170899526, guid: 4a092a6515699734c97c14908e6950e6, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 3
+      minSpacing: 3
     - prefab: {fileID: 1932527772173605773, guid: 9262a1e7479f8ff459e4e75430db4a62, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 1
+      minSpacing: 3
     - prefab: {fileID: 4856703358054291088, guid: f275caa61075c474f946365c6a716a47, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 1
+      minSpacing: 3
     - prefab: {fileID: 8308031950469875999, guid: 3b5e20c3aa2ce8741a4e24137492ed51, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 1
+      minSpacing: 3
     - prefab: {fileID: 3539587176760497276, guid: 12e2a6529d1bf8044a7062c121908a92, type: 3}
-      count: 2
-      minSpacing: 2
+      count: 1
+      minSpacing: 3
     - prefab: {fileID: 6298899845371187418, guid: a30ebdf052045d8448bb9c08f7f4b2c8, type: 3}
       count: 1
-      minSpacing: 2
+      minSpacing: 3
   - classification: Trees
     zone:
       name: Trees
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 3743887058419754457, guid: 98cdb4c398df77a4caea43077c2532e2, type: 3}
@@ -243,10 +243,10 @@ MonoBehaviour:
   - classification: Woods
     zone:
       name: Woods
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 786580619863807619, guid: e68d28f2829e35d4f8611fad6bf9e331, type: 3}
@@ -315,10 +315,10 @@ MonoBehaviour:
   - classification: Animals
     zone:
       name: Animals
-      minX: -50
-      maxX: 50
-      minZ: -50
-      maxZ: 50
+      minX: -47
+      maxX: 47
+      minZ: -47
+      maxZ: 47
       yPosition: 2
     objectsToSpawn:
     - prefab: {fileID: 1009200002385053497, guid: 315409247b7cb9c4fbe65ab685eb51d7, type: 3}

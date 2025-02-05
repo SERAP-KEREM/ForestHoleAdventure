@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TriInspector;
 
 namespace _Main._Level
 {
@@ -10,39 +11,60 @@ namespace _Main._Level
         [System.Serializable]
         public class SpawnZone
         {
-            [Tooltip("Name of the spawn zone.")]
+            [PropertyTooltip("Name of the spawn zone.")]
+            [Group("Spawn Zone Settings")]
             public string name;
-            [Tooltip("Minimum X position of the zone.")]
+
+            [PropertyTooltip("Minimum X position of the zone.")]
+            [Group("Spawn Zone Settings")]
             public float minX;
-            [Tooltip("Maximum X position of the zone.")]
+
+            [PropertyTooltip("Maximum X position of the zone.")]
+            [Group("Spawn Zone Settings")]
             public float maxX;
-            [Tooltip("Minimum Z position of the zone.")]
+
+            [PropertyTooltip("Minimum Z position of the zone.")]
+            [Group("Spawn Zone Settings")]
             public float minZ;
-            [Tooltip("Maximum Z position of the zone.")]
+
+            [PropertyTooltip("Maximum Z position of the zone.")]
+            [Group("Spawn Zone Settings")]
             public float maxZ;
-            [Tooltip("Y position of the spawn zone.")]
+
+            [PropertyTooltip("Y position of the spawn zone.")]
+            [Group("Spawn Zone Settings")]
             public float yPosition = 0f;
         }
 
         [System.Serializable]
         public class ObjectSpawnInfo
         {
-            [Tooltip("Prefab to spawn.")]
+            [PropertyTooltip("Prefab to spawn.")]
+            [Group("Object Spawn Settings")]
             public GameObject prefab;
-            [Tooltip("Number of objects to spawn.")]
+
+            [PropertyTooltip("Number of objects to spawn.")]
+            [Group("Object Spawn Settings")]
             public int count;
-            [Tooltip("Minimum spacing between objects.")]
+
+            [PropertyTooltip("Minimum spacing between objects.")]
+            [Group("Object Spawn Settings")]
             [Range(1f, 5f)] public float minSpacing = 2f;
         }
 
         [System.Serializable]
         public class ClassifiedSpawnInfo
         {
-            [Tooltip("Classification of the spawn area (e.g., 'Forest', 'Desert').")]
+            [PropertyTooltip("Classification of the spawn area (e.g., 'Forest', 'Desert').")]
+            [Group("Classified Spawn Settings")]
             public string classification;
-            [Tooltip("The spawn zone for this classification.")]
+
+            [PropertyTooltip("The spawn zone for this classification.")]
+            [Group("Classified Spawn Settings")]
             public SpawnZone zone;
-            [Tooltip("List of objects to spawn in this classification.")]
+
+            [PropertyTooltip("List of objects to spawn in this classification.")]
+            [Group("Classified Spawn Settings")]
             public List<ObjectSpawnInfo> objectsToSpawn;
         }
 
@@ -50,12 +72,12 @@ namespace _Main._Level
 
         #region Serialized Fields
 
-        [Header("Classified Spawn Settings")]
-        [Tooltip("List of classified spawn zones and their objects.")]
+        [Group("Classified Spawn Settings")]
+        [PropertyTooltip("List of classified spawn zones and their objects.")]
         [SerializeField] private List<ClassifiedSpawnInfo> classifiedObjects;
 
-        [Header("Debug Settings")]
-        [Tooltip("Toggle to show gizmos in the editor.")]
+        [Group("Debug Settings")]
+        [PropertyTooltip("Toggle to show gizmos in the editor.")]
         [SerializeField] private bool showDebugGizmos = true;
 
         private List<Vector3> occupiedPositions = new List<Vector3>();
