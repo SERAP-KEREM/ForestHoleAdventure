@@ -1,47 +1,40 @@
 using UnityEngine;
 using Cinemachine;
 using DG.Tweening;
-using TriInspector;
-using SerapKeremGameTools._Game._Singleton;
 
 namespace _Main._Hole
 {
     /// <summary>
     /// Camera controller to handle hole camera's position and transition based on the hole size.
     /// </summary>
-     [DeclareFoldoutGroup("Camera Settings", Title = "Camera Settings")]
-    [DeclareFoldoutGroup("Follow Settings", Title = "Follow Settings")]
-    [DeclareFoldoutGroup("Transition Settings", Title = "Transition Settings")]
-    public class HoleCameraController : MonoSingleton<HoleCameraController>
+    public class HoleCameraController : MonoBehaviour
     {
         #region Camera Settings
 
-        [Group("Camera Settings")]
-        [SerializeField, PropertyTooltip("The virtual camera that follows the hole.")]
+        [Header("Camera Settings")]
+        [SerializeField, Tooltip("The virtual camera that follows the hole.")]
         private CinemachineVirtualCamera _virtualCamera;
 
         #endregion
 
         #region Follow Settings
 
-        [Group("Follow Settings")]
-        [SerializeField, PropertyTooltip("Initial offset for the camera's position.")]
+        [Header("Follow Settings")]
+        [SerializeField, Tooltip("Initial offset for the camera's position.")]
         private Vector3 _initialOffset = new Vector3(0f, 15f, -5f);
 
-        [Group("Follow Settings")]
-        [SerializeField, PropertyTooltip("Maximum offset for the camera's position.")]
+        [SerializeField, Tooltip("Maximum offset for the camera's position.")]
         private Vector3 _maxOffset = new Vector3(0f, 25f, -15f);
 
         #endregion
 
         #region Transition Settings
 
-        [Group("Transition Settings")]
-        [SerializeField, PropertyTooltip("Duration of the camera transition.")]
+        [Header("Transition Settings")]
+        [SerializeField, Tooltip("Duration of the camera transition.")]
         private float _transitionDuration = 0.5f;
 
-        [Group("Transition Settings")]
-        [SerializeField, PropertyTooltip("Ease type for the camera transition.")]
+        [SerializeField, Tooltip("Ease type for the camera transition.")]
         private Ease _transitionEase = Ease.InOutQuad;
 
         #endregion
@@ -51,9 +44,8 @@ namespace _Main._Hole
         private float _maxHoleSize;
         private Tween _currentCameraTween;
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             // Ensure virtual camera is assigned
             if (_virtualCamera == null)
             {
@@ -113,6 +105,32 @@ namespace _Main._Hole
             .SetUpdate(true);
         }
 
+        private void OnDestroy()
+        {
+            // Kill the camera tween on destroy
+            _currentCameraTween?.Kill();
+        }
 
+#if UNITY_EDITOR
+        #region Debug Settings
+
+        [Header("Debug")]
+        [SerializeField, Tooltip("Toggle to enable or disable the debug mode.")]
+        private bool _debugMode;
+
+        [SerializeField, Range(1f, 10f), Tooltip("Test value to simulate hole size in the editor.")]
+        private float _testHoleSize = 1f;
+
+        private void OnValidate()
+        {
+            // Update camera position in the editor when in debug mode
+            if (_debugMode && Application.isPlaying)
+            {
+                UpdateCameraPosition(_testHoleSize);
+            }
+        }
+
+        #endregion
+#endif
     }
 }

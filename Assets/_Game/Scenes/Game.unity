@@ -529,6 +529,7 @@ MonoBehaviour:
   _settingsPanel: {fileID: 436679758}
   _winPanel: {fileID: 46254598}
   _failPanel: {fileID: 1342781768}
+  _holeController: {fileID: 0}
 --- !u!1 &95631266
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,6 +559,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441ba22a8639ac4498ac3d4745cee0a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _levelManager: {fileID: 1704457788}
+  _uiManager: {fileID: 89297620}
   _levelDatas:
   - {fileID: 11400000, guid: bc8625d93e265d4488578e11ee9ebe2a, type: 2}
   - {fileID: 11400000, guid: 31d3d9b43b7f34f41a2ef2e19e614861, type: 2}
@@ -1468,6 +1471,8 @@ MonoBehaviour:
   _maxOffset: {x: 0, y: 35, z: -30}
   _transitionDuration: 0.5
   _transitionEase: 7
+  _debugMode: 0
+  _testHoleSize: 1
 --- !u!4 &545514579
 Transform:
   m_ObjectHideFlags: 0
@@ -4793,6 +4798,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5321b97d4e3cb419611b4a313b40de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _holeManager: {fileID: 1779853348}
+  _gameplayUI: {fileID: 167039959}
+  _uiManager: {fileID: 89297620}
+  _cameraController: {fileID: 545514578}
   onLevelComplete:
     m_PersistentCalls:
       m_Calls: []
@@ -4967,6 +4976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _holeTransform: {fileID: 1018630777}
+  _levelManager: {fileID: 1704457788}
 --- !u!65 &1779853349
 BoxCollider:
   m_ObjectHideFlags: 0

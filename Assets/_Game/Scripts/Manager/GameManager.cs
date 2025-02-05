@@ -7,30 +7,28 @@ using DG.Tweening;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using SerapKeremGameTools._Game._SaveLoadSystem;
-using TriInspector;
 
 namespace _Main._Managers
 {
     /// <summary>
     /// Manages game flow, levels, UI, audio, and game state. Handles level transitions and music.
     /// </summary>
-    /// 
-    [DeclareFoldoutGroup("Level Settings", Title = "Level Settings")]
-    [DeclareFoldoutGroup("Audio", Title = "Audio")]
     public class GameManager : MonoSingleton<GameManager>
     {
         #region Serialized Fields
 
-        [Group("Level Settings")]
-        [SerializeField, PropertyTooltip("Array of level data for game levels.")] 
-        private LevelData[] _levelDatas;
-        
+        [Header("Managers")]
+        [SerializeField, Tooltip("Reference to the Level Manager.")] private LevelManager _levelManager;
+        [SerializeField, Tooltip("Reference to the UI Manager.")] private UIManager _uiManager;
+
+        [Header("Level Settings")]
+        [SerializeField, Tooltip("Array of level data for game levels.")] private LevelData[] _levelDatas;
         private int _currentLevelIndex = 0;
         private LevelGenerator _activeLevelGenerator;
 
-        [Group("Audio")]
-        [SerializeField, PropertyTooltip("Name of the background music clip to play.")] 
-        private string backgroundMusicName = "BackgroundMusic";
+        [Header("Audio")]
+        [SerializeField, Tooltip("Name of the background music clip to play.")] private string backgroundMusicName = "BackgroundMusic";
+        private AudioManager _audioManager;
 
         #endregion
 
@@ -48,7 +46,7 @@ namespace _Main._Managers
         protected override void Awake()
         {
             base.Awake();
-            InitializeGame();
+        
         }
 
         /// <summary>
@@ -56,6 +54,7 @@ namespace _Main._Managers
         /// </summary>
         private void Start()
         {
+            InitializeGame();
             StartCoroutine(InitializeGameCoroutine());
             PlayBackgroundMusic();
             ApplySavedMusicVolume();
@@ -71,6 +70,7 @@ namespace _Main._Managers
         private void InitializeGame()
         {
             _currentLevelIndex = LoadManager.LoadData<int>("CurrentLevel", 0);
+            _audioManager = AudioManager.Instance;
 
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -101,8 +101,8 @@ namespace _Main._Managers
                 SaveManager.SaveData("CurrentLevel", 0);
             }
 
-            UIManager.Instance?.InitializeUI();
-            LevelManager.Instance?.InitializeLevel(_levelDatas[_currentLevelIndex]);
+            _uiManager?.InitializeUI();
+            _levelManager?.InitializeLevel(_levelDatas[_currentLevelIndex]);
 
             SetupLevelGenerator();
         }
@@ -128,8 +128,7 @@ namespace _Main._Managers
             }
             else
             {
-                Debug.LogWarning($"Level {currentLevelData.LevelNumber} is missing the LevelGeneratorPrefab assignment!");
-
+                Debug.LogWarning($"Level {currentLevelData.LevelNumber} için LevelGeneratorPrefab atanmad?!");
             }
         }
 
@@ -170,7 +169,7 @@ namespace _Main._Managers
         /// </summary>
         public void PlayBackgroundMusic()
         {
-            AudioManager.Instance?.PlayAudio(backgroundMusicName,true);
+            _audioManager?.PlayAudio(backgroundMusicName, true);
         }
 
         /// <summary>
@@ -221,8 +220,10 @@ namespace _Main._Managers
         /// </summary>
         private void FindManagers()
         {
+            _levelManager = FindObjectOfType<LevelManager>();
+            _uiManager = FindObjectOfType<UIManager>();
 
-            if (LevelManager.Instance == null || UIManager.Instance == null)
+            if (_levelManager == null || _uiManager == null)
             {
                 Debug.LogError("Essential managers are missing!");
             }

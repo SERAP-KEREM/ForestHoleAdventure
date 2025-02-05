@@ -1,15 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using TriInspector;
 
 namespace _Main._UI
 {
     public class WinPanel : MonoBehaviour
     {
-        [Group("UI Buttons")]
+        [Header("UI Buttons")]
         [SerializeField] private Button _nextLevelButton;
         [SerializeField] private Button _restartButton;
+
+        private UIManager _uiManager;
 
         #region Initialization
 
@@ -18,6 +19,7 @@ namespace _Main._UI
         /// </summary>
         private void Awake()
         {
+            _uiManager = GetComponentInParent<UIManager>();
             SetupButtons();
         }
 
@@ -27,10 +29,10 @@ namespace _Main._UI
         private void SetupButtons()
         {
             if (_nextLevelButton != null)
-                _nextLevelButton.onClick.AddListener(() => UIManager.Instance.NextLevel());
+                _nextLevelButton.onClick.AddListener(() => _uiManager.NextLevel());
 
             if (_restartButton != null)
-                _restartButton.onClick.AddListener(() => UIManager.Instance.RestartGame());
+                _restartButton.onClick.AddListener(() => _uiManager.RestartGame());
         }
 
         #endregion

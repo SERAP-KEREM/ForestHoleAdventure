@@ -5,43 +5,31 @@ using SerapKeremGameTools._Game._AudioSystem;
 using TMPro;
 using UnityEngine.SceneManagement;
 using SerapKeremGameTools._Game._SaveLoadSystem;
-using TriInspector;
 
 namespace _Main._UI
 {
     /// <summary>
     /// Manages the settings panel UI elements and audio volume settings.
     /// </summary>
-    [DeclareFoldoutGroup("UI Elements", Title = "UI Elements")]
-    [DeclareFoldoutGroup("Audio", Title = "Audio")]
     public class SettingsPanel : MonoBehaviour
     {
-        
-        [SerializeField, Group("UI Elements"), PropertyTooltip("Close button to hide the settings panel.")]
-        private Button _closeButton;
+        [Header("UI Elements")]
+        [SerializeField, Tooltip("Close button to hide the settings panel.")] private Button _closeButton;
+        [SerializeField, Tooltip("New game button to restart the game.")] private Button _newGameButton;
+        [SerializeField, Tooltip("Resume button to resume the game.")] private Button _resumeButton;
+        [SerializeField, Tooltip("Slider to control music volume.")] private Slider _musicSlider;
+        [SerializeField, Tooltip("Text displaying the music volume percentage.")] private TextMeshProUGUI _musicValueText;
+        [SerializeField, Tooltip("Canvas group to control UI transparency.")] private CanvasGroup _canvasGroup;
 
-        [SerializeField, Group("UI Elements"), PropertyTooltip("New game button to restart the game.")] 
-        private Button _newGameButton;
-
-        [SerializeField, Group("UI Elements"), PropertyTooltip("Resume button to resume the game.")]
-        private Button _resumeButton;
-
-        [SerializeField, Group("UI Elements"), PropertyTooltip("Slider to control music volume.")] 
-        private Slider _musicSlider;
-
-        [SerializeField, Group("UI Elements"), PropertyTooltip("Text displaying the music volume percentage.")]
-        private TextMeshProUGUI _musicValueText;
-
-        [SerializeField, Group("UI Elements"), PropertyTooltip("Canvas group to control UI transparency.")] 
-        private CanvasGroup _canvasGroup;
-
-        [Group("Audio")]
-        [SerializeField, PropertyTooltip("Background music audio clip name.")] private string _backgroundMusicName = "BackgroundMusic";
+        [Header("Audio")]
+        [SerializeField, Tooltip("Background music audio clip name.")] private string _backgroundMusicName = "BackgroundMusic";
         private const string MUSIC_VOLUME_KEY = "MusicVolume";
 
+        private UIManager _uiManager;
 
         private void Awake()
         {
+            _uiManager = GetComponentInParent<UIManager>();
 
             if (_closeButton != null)
             {
@@ -92,9 +80,9 @@ namespace _Main._UI
         /// </summary>
         private void OnCloseButtonClicked()
         {
-            if (UIManager.Instance != null)
+            if (_uiManager != null)
             {
-                UIManager.Instance.HideSettings();
+                _uiManager.HideSettings();
             }
         }
 
@@ -114,7 +102,7 @@ namespace _Main._UI
         private void OnResumeClicked()
         {
             Time.timeScale = 1f;
-            UIManager.Instance.HideSettings();
+            _uiManager.HideSettings();
         }
 
         /// <summary>

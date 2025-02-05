@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using TriInspector;
-using SerapKeremGameTools._Game._Singleton;
 
 namespace _Main._UI
 {
@@ -11,56 +10,46 @@ namespace _Main._UI
     /// Manages the gameplay UI elements like score, level, timer, and score progress.
     /// Provides functionalities to update score, timer, and display threshold marks.
     /// </summary>
-    [DeclareFoldoutGroup("Text Elements", Title = "Text Elements")]
-    [DeclareFoldoutGroup("Buttons", Title = "Buttons")]
-    [DeclareFoldoutGroup("Score Progress", Title = "Score Progress")]
-    [DeclareFoldoutGroup("Visual Settings", Title = "Visual Settings")]
-    public class GameplayUI : MonoSingleton<GameplayUI>
+    public class GameplayUI : MonoBehaviour
     {
-        [Group("Text Elements")]
-        [PropertyTooltip("Text displaying the current level number.")]
+        [Header("Text Elements")]
+        [Tooltip("Text displaying the current level number.")]
         [SerializeField, Required] private TextMeshProUGUI _levelText;
 
-        [Group("Text Elements")]
-        [PropertyTooltip("Text displaying the remaining time.")]
+        [Tooltip("Text displaying the remaining time.")]
         [SerializeField, Required] private TextMeshProUGUI _timerText;
 
-        [Group("Text Elements")]
-        [PropertyTooltip("Text displaying the current score and target score.")]
+        [Tooltip("Text displaying the current score and target score.")]
         [SerializeField, Required] private TextMeshProUGUI _scoreText;
 
-        [Group("Buttons")]
-        [PropertyTooltip("Button to open the settings panel.")]
+        [Header("Buttons")]
+        [Tooltip("Button to open the settings panel.")]
         [SerializeField, Required] private Button _settingsButton;
 
-        [Group("Score Progress")]
-        [PropertyTooltip("Slider showing the current score progress.")]
+        [Header("Score Progress")]
+        [Tooltip("Slider showing the current score progress.")]
         [SerializeField, Required] private Slider _scoreSlider;
 
-        [Group("Score Progress")]
-        [PropertyTooltip("Container for score threshold marks.")]
+        [Tooltip("Container for score threshold marks.")]
         [SerializeField, Required] private RectTransform _sliderMarksContainer;
 
-        [Group("Score Progress")]
-        [PropertyTooltip("Prefab for threshold marks.")]
+        [Tooltip("Prefab for threshold marks.")]
         [SerializeField, Required] private GameObject _thresholdMarkPrefab;
 
-        [Group("Visual Settings")]
-        [PropertyTooltip("Color of the threshold marks when not reached.")]
+        [Header("Visual Settings")]
+        [Tooltip("Color of the threshold marks when not reached.")]
         [SerializeField] private Color _normalMarkColor = Color.white;
 
-        [Group("Visual Settings")]
-        [PropertyTooltip("Color of the threshold marks when reached.")]
+        [Tooltip("Color of the threshold marks when reached.")]
         [SerializeField] private Color _reachedMarkColor = Color.green;
 
-        [Group("Visual Settings")]
-        [PropertyTooltip("Width of the threshold marks.")]
+        [Tooltip("Width of the threshold marks.")]
         [SerializeField] private float _markWidth = 4f;
 
-        [Group("Visual Settings")]
-        [PropertyTooltip("Height of the threshold marks.")]
+        [Tooltip("Height of the threshold marks.")]
         [SerializeField] private float _markHeight = 20f;
 
+        private UIManager _uiManager;
         private int _targetScore;
         private int[] _thresholds;
         private Image[] _thresholdMarks;
@@ -68,11 +57,9 @@ namespace _Main._UI
         /// <summary>
         /// Initializes references and button interactions.
         /// </summary>
-
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
-            
+            _uiManager = GetComponentInParent<UIManager>();
             SetupSettingsButton();
             ValidateReferences();
         }
@@ -97,7 +84,7 @@ namespace _Main._UI
             if (_settingsButton != null)
             {
                 _settingsButton.onClick.RemoveAllListeners();
-                _settingsButton.onClick.AddListener(() => UIManager.Instance.ShowSettings());
+                _settingsButton.onClick.AddListener(() => _uiManager.ShowSettings());
             }
         }
 

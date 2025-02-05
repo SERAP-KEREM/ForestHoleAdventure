@@ -7,7 +7,7 @@ using SerapKeremGameTools._Game._Singleton;
 namespace _Main._Hole
 {
     [DeclareFoldoutGroup("Movement Settings", Title = "Movement Settings")]
-    public class HoleController : MonoSingleton<HoleController>
+    public class HoleController : MonoBehaviour
     {
         [Group("Movement Settings")]
         [SerializeField] private float _moveSpeed = 5f;
@@ -17,10 +17,7 @@ namespace _Main._Hole
         private Vector3 _currentVelocity;
         private Vector3 _targetPosition;
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
+        
         private void Start()
         {
             _targetPosition = transform.position;
