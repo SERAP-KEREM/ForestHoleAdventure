@@ -10,14 +10,14 @@ https://github.com/user-attachments/assets/77ca87ad-58cb-4d85-b9cc-262e7417ad75
 ### 🖼️ **Screenshots**  
 
 <p align="center">
-  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/1.png?raw=true?raw=true" alt="Game Screenshot 1" width="300">
-  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/2.png?raw=true?raw=true" alt="Game Screenshot 2" width="300">
-   <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/3.png?raw=true" alt="Game Screenshot 3" width="300">
+  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/1.png?raw=true?raw=true" alt="Game Screenshot 1" width="200">
+  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/2.png?raw=true?raw=true" alt="Game Screenshot 2" width="200">
+   <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/3.png?raw=true" alt="Game Screenshot 3" width="200">
 </p>
 <p align="center">
-  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/4.png?raw=true" alt="Game Screenshot 4" width="300">
-  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/6.png?raw=true" alt="Game Screenshot 5" width="300">
- <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/5.png?raw=truee" alt="Game Screenshot 6" width="300">
+  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/4.png?raw=true" alt="Game Screenshot 4" width="200">
+  <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/6.png?raw=true" alt="Game Screenshot 5" width="200">
+ <img src="https://github.com/SERAP-KEREM/Hole/blob/main/Assets/GameImages/5.png?raw=truee" alt="Game Screenshot 6" width="200">
 </p>
 
 ---
