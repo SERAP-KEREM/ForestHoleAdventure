@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using TriInspector;
+using _Main._Managers;
 
 namespace _Main._UI
 {
@@ -59,7 +60,7 @@ namespace _Main._UI
         /// </summary>
         private void Awake()
         {
-            _uiManager = GetComponentInParent<UIManager>();
+           _uiManager=GameManager.Instance.GetUIManager();
             SetupSettingsButton();
             ValidateReferences();
         }
@@ -135,6 +136,7 @@ namespace _Main._UI
             _scoreSlider.minValue = 0;
             _scoreSlider.maxValue = _targetScore;
             _scoreSlider.value = 0;
+            _scoreSlider.interactable = false;
 
             Image fillImage = _scoreSlider.fillRect.GetComponent<Image>();
             fillImage.color = new Color(0.2f, 0.8f, 0.2f);

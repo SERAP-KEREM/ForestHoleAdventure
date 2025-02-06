@@ -1,12 +1,13 @@
-using UnityEngine;
+using _Main._Hole;
 using _Main._Level;
 using _Main._UI;
-using SerapKeremGameTools._Game._AudioSystem;
-using SerapKeremGameTools._Game._Singleton;
 using DG.Tweening;
-using UnityEngine.SceneManagement;
-using System.Collections;
+using SerapKeremGameTools._Game._AudioSystem;
 using SerapKeremGameTools._Game._SaveLoadSystem;
+using SerapKeremGameTools._Game._Singleton;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _Main._Managers
 {
@@ -17,24 +18,54 @@ namespace _Main._Managers
     {
         #region Serialized Fields
 
-        [Header("Managers")]
-        [SerializeField, Tooltip("Reference to the Level Manager.")] private LevelManager _levelManager;
-        [SerializeField, Tooltip("Reference to the UI Manager.")] private UIManager _uiManager;
-
         [Header("Level Settings")]
-        [SerializeField, Tooltip("Array of level data for game levels.")] private LevelData[] _levelDatas;
+        [SerializeField, Tooltip("Array of level data for game levels.")]
+        private LevelData[] _levelDatas;
+
+        [SerializeField, Tooltip("Index of the current level.")]
         private int _currentLevelIndex = 0;
+
+        [SerializeField, Tooltip("Reference to the active Level Generator.")]
         private LevelGenerator _activeLevelGenerator;
 
         [Header("Audio")]
-        [SerializeField, Tooltip("Name of the background music clip to play.")] private string backgroundMusicName = "BackgroundMusic";
+        [SerializeField, Tooltip("Name of the background music clip to play.")]
+        private string backgroundMusicName = "BackgroundMusic";
+
+        [SerializeField, Tooltip("Reference to the AudioManager.")]
         private AudioManager _audioManager;
+
+        [Header("Game References")]
+        [SerializeField, Tooltip("Reference to the HoleController.")]
+        private HoleController _holeController;
+
+        [SerializeField, Tooltip("Reference to the HoleManager for hole size and behavior.")]
+        private HoleManager _holeManager;
+
+        [SerializeField, Tooltip("Reference to the Gameplay UI for score and timer updates.")]
+        private GameplayUI _gameplayUI;
+
+        [SerializeField, Tooltip("Reference to the UIManager for UI management.")]
+        private UIManager _uiManager;
+
+        [SerializeField, Tooltip("Reference to the HoleCameraController to adjust the camera for hole growth.")]
+        private HoleCameraController _cameraController;
 
         #endregion
 
         #region Private Variables
 
         private bool _isInitialized = false;
+
+        #endregion
+
+        #region Public Properties
+
+        public HoleController GetHoleController() => _holeController;
+        public HoleManager GetHoleManager() => _holeManager;
+        public GameplayUI GetGameplayUI() => _gameplayUI;
+        public UIManager GetUIManager() => _uiManager;
+        public HoleCameraController GetHoleCameraController() => _cameraController;
 
         #endregion
 
@@ -102,7 +133,7 @@ namespace _Main._Managers
             }
 
             _uiManager?.InitializeUI();
-            _levelManager?.InitializeLevel(_levelDatas[_currentLevelIndex]);
+            LevelManager.Instance?.InitializeLevel(_levelDatas[_currentLevelIndex]);
 
             SetupLevelGenerator();
         }
@@ -220,10 +251,9 @@ namespace _Main._Managers
         /// </summary>
         private void FindManagers()
         {
-            _levelManager = FindObjectOfType<LevelManager>();
             _uiManager = FindObjectOfType<UIManager>();
 
-            if (_levelManager == null || _uiManager == null)
+            if (LevelManager.Instance == null || _uiManager == null)
             {
                 Debug.LogError("Essential managers are missing!");
             }

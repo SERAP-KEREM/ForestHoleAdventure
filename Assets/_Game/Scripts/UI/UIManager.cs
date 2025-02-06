@@ -15,7 +15,7 @@ namespace _Main._UI
         [SerializeField] private FailPanel _failPanel;
 
         [Header("References")]
-        [SerializeField] private HoleController _holeController;
+        private HoleController _holeController;
 
         #region Initialization
 
@@ -24,10 +24,7 @@ namespace _Main._UI
         /// </summary>
         private void Awake()
         {
-            if (_holeController == null)
-            {
-                _holeController = FindObjectOfType<HoleController>();
-            }
+            _holeController=GameManager.Instance.GetHoleController();
             ValidateReferences();
             SetupPanels();
         }

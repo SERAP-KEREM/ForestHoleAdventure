@@ -5,6 +5,7 @@ using SerapKeremGameTools._Game._AudioSystem;
 using TMPro;
 using UnityEngine.SceneManagement;
 using SerapKeremGameTools._Game._SaveLoadSystem;
+using _Main._Managers;
 
 namespace _Main._UI
 {
@@ -14,12 +15,18 @@ namespace _Main._UI
     public class SettingsPanel : MonoBehaviour
     {
         [Header("UI Elements")]
-        [SerializeField, Tooltip("Close button to hide the settings panel.")] private Button _closeButton;
-        [SerializeField, Tooltip("New game button to restart the game.")] private Button _newGameButton;
-        [SerializeField, Tooltip("Resume button to resume the game.")] private Button _resumeButton;
-        [SerializeField, Tooltip("Slider to control music volume.")] private Slider _musicSlider;
-        [SerializeField, Tooltip("Text displaying the music volume percentage.")] private TextMeshProUGUI _musicValueText;
-        [SerializeField, Tooltip("Canvas group to control UI transparency.")] private CanvasGroup _canvasGroup;
+        [SerializeField, Tooltip("Close button to hide the settings panel.")]
+        private Button _closeButton;
+        [SerializeField, Tooltip("New game button to restart the game.")]
+        private Button _newGameButton;
+        [SerializeField, Tooltip("Resume button to resume the game.")] 
+        private Button _resumeButton;
+        [SerializeField, Tooltip("Slider to control music volume.")] 
+        private Slider _musicSlider;
+        [SerializeField, Tooltip("Text displaying the music volume percentage.")] 
+        private TextMeshProUGUI _musicValueText;
+        [SerializeField, Tooltip("Canvas group to control UI transparency.")]
+        private CanvasGroup _canvasGroup;
 
         [Header("Audio")]
         [SerializeField, Tooltip("Background music audio clip name.")] private string _backgroundMusicName = "BackgroundMusic";
@@ -29,7 +36,7 @@ namespace _Main._UI
 
         private void Awake()
         {
-            _uiManager = GetComponentInParent<UIManager>();
+            _uiManager = GameManager.Instance.GetUIManager();
 
             if (_closeButton != null)
             {

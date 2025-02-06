@@ -6,24 +6,25 @@ using UnityEngine.SceneManagement;
 using DG.Tweening;
 using _Main._Hole;
 using SerapKeremGameTools._Game._Singleton;
+using _Main._Managers;
 
 namespace _Main._Level
 {
     /// <summary>
     /// Handles the current level’s gameplay mechanics, including score tracking, timer, hole size growth, and level completion.
     /// </summary>
-    public class LevelManager : MonoBehaviour
+    public class LevelManager : MonoSingleton<LevelManager>
     {
         #region Serialized Fields
 
         [Header("References")]
-        [SerializeField, Tooltip("Reference to the HoleManager for hole size and behavior.")]
+        [Tooltip("Reference to the HoleManager for hole size and behavior.")]
         private HoleManager _holeManager;
-        [SerializeField, Tooltip("Reference to the Gameplay UI for score and timer updates.")]
+        [Tooltip("Reference to the Gameplay UI for score and timer updates.")]
         private GameplayUI _gameplayUI;
-        [SerializeField, Tooltip("Reference to the UIManager for UI management.")] 
+        [Tooltip("Reference to the UIManager for UI management.")]
         private UIManager _uiManager;
-        [SerializeField, Tooltip("Reference to the HoleCameraController to adjust the camera for hole growth.")] 
+        [Tooltip("Reference to the HoleCameraController to adjust the camera for hole growth.")]
         private HoleCameraController _cameraController;
 
         [Header("Events")]
@@ -43,7 +44,11 @@ namespace _Main._Level
         #endregion
 
         #region Unity Callbacks
-       
+
+        protected override void Awake()
+        {
+            base.Awake();
+        }
         /// <summary>
         /// Initializes the level by validating references and ensuring proper setup.
         /// </summary>
@@ -61,10 +66,10 @@ namespace _Main._Level
         /// </summary>
         private void ValidateReferences()
         {
-            if (_holeManager == null) _holeManager = FindObjectOfType<HoleManager>();
-            if (_gameplayUI == null) _gameplayUI = FindObjectOfType<GameplayUI>();
-            if (_uiManager == null) _uiManager = FindObjectOfType<UIManager>();
-            if (_cameraController == null) _cameraController = FindObjectOfType<HoleCameraController>();
+            _holeManager = GameManager.Instance.GetHoleManager();
+            _gameplayUI = GameManager.Instance.GetGameplayUI();
+            _uiManager = GameManager.Instance.GetUIManager();
+            _cameraController = GameManager.Instance.GetHoleCameraController();
 
             // Log errors if any reference is missing
             if (_holeManager == null) Debug.LogError("HoleManager is missing!");
@@ -79,6 +84,7 @@ namespace _Main._Level
         /// <param name="levelData">The data representing the current level.</param>
         public void InitializeLevel(LevelData levelData)
         {
+            ValidateReferences();
             if (levelData == null)
             {
                 Debug.LogError("LevelData is null!");

@@ -15,10 +15,6 @@ namespace _Main._Hole
         [SerializeField, Tooltip("Transform of the hole object.")]
         private Transform _holeTransform;
 
-        [Header("Level Settings")]
-        [SerializeField, Tooltip("Reference to the Level Manager.")]
-        private LevelManager _levelManager;
-
         #endregion
 
         /// <summary>
@@ -38,7 +34,7 @@ namespace _Main._Hole
                 // Check if the hole is large enough to collect the object
                 if (holeSize >= objectSize * 0.9f)
                 {
-                    _levelManager.AddScore(collectible.Score);
+                    LevelManager.Instance.AddScore(collectible.Score);
                     collectible.Collect(_holeTransform);
 
                     Debug.Log($"Collected: {other.gameObject.name}, " +

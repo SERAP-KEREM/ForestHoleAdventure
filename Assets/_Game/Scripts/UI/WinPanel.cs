@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using _Main._Managers;
 
 namespace _Main._UI
 {
@@ -19,7 +20,7 @@ namespace _Main._UI
         /// </summary>
         private void Awake()
         {
-            _uiManager = GetComponentInParent<UIManager>();
+           _uiManager=GameManager.Instance.GetUIManager();
             SetupButtons();
         }
 
