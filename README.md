@@ -50,7 +50,7 @@ https://github.com/user-attachments/assets/77ca87ad-58cb-4d85-b9cc-262e7417ad75
 
 ### 🔹 **Game Manager**  
 - 🧠 Manages the entire game flow:  
-  - Level transitions, 🎵 music settings, 🕹️ UI controls, and game states.  
+  - Level transitions, and game states.  
 
 ---
 
